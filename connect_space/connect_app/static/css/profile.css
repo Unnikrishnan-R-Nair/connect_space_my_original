@@ -1,0 +1,50 @@
+input[type='text'] {
+    padding: 7px;
+}
+input[type='email'] {
+    padding: 7px;
+}
+input[type='number'] {
+    padding: 7px;
+}
+input[type='date']{
+    padding: 7px;
+}
+
+textarea {
+    padding-inline: 7px;
+}
+
+input[type='file' i] {
+    background-color: rgb(201, 201, 201);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.profile-img div{
+    position: relative;
+    width: fit-content;
+}
+
+.profile-img div img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.profile-img i {
+    position: absolute;
+    bottom:5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+.profile-img div span:has(i.fa-solid.fa-xmark) {
+    display: none;
+}
+
+.profile-img .fa-solid.fa-xmark {
+    margin-right: 2.5px;
+}

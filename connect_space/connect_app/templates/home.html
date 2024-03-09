@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% load tz %}
+
+{% block link_block %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<section>
+    <div class="py-3 bg-slate-300 text-center">
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="text" placeholder="Search people" class="w-6/12 p-1 rounded">
+            <button type="submit" class="px-4 py-1 rounded border border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">Search</button>
+        </form>
+        
+    </div>
+</section>
+<section>
+    <div class="grid grid-cols-6 gap-4 mx-3 sm:mx-10 mt-5 mb-10">
+        <div class="rounded shadow-sm user-section border bg-white" style="height: fit-content;">
+            <div class="cover-photo">
+
+            </div>
+            <div class="user-detail">
+                <div class="text-center">
+
+                    <img width="60px" class="rounded mt-10 mx-auto mb-3 border-white border-2 user-image" src="{{profile_obj.image.url}}" alt="">
+                    
+                    {% if profile_obj.first_name != None %}
+
+                    <h4 class="font-semibold">{{ profile_obj.first_name }} {{profile_obj.last_name}}</h4>
+
+                    {% else %}
+
+                    <h4>Hello <i class="font-semibold">User</i>, complete your profile details</h4>
+
+                    {% endif %}
+                    
+                    
+                    <p></p>
+                    <div class="flex mt-5  justify-center">
+                        <div class="border-r-2 px-4">
+                            <span class="font-bold">{{post_count.total_post}}</span>
+                            <div>Post</div>
+                        </div>
+                        <div class="border-r-2 px-4">
+                            <span>Followers</span>
+                            <div>Followers</div>
+
+                        </div>
+                        <div class=" px-4">
+                            <span>Following</span>
+                            <div>Following</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-300 mt-4">
+                <ul>
+                    <!-- post add link -->
+                    <li class="border-b border-gray-300 text-center p-4 post-link"><a href="{% url 'post-add' %}" class="text-xl"><i class="fa-solid fa-plus"></i> Post</a></li>
+                </ul>
+                
+            </div>
+        </div>
+    
+        <div class="post-story-section">
+            <div class=" flex gap-5 p-2 px-10 bg-white shadow-md border-2 rounded ">
+                <!-- STORY -->
+                <div class="left-slide-btn">
+                    <i class="fa-solid fa-chevron-left fa-2x"></i>
+                </div>
+                <div class="card mt-3 rounded flex-none border-dashed border-2 flex justify-center items-center flex-col gap-3">
+                    <button
+                        type="button"
+                        class="rounded-full bg-white px-3 py-3 text-sm font-semibold text-black shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="h-4 w-4"
+                        >
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                    <p>Post a story</p>
+                </div>
+                <div class="story-div overflow-x-auto flex gap-5 p-3 px-5">
+                    
+                    <div class="card rounded flex-none border-2">
+    
+                    </div>
+                    <div class="card rounded flex-none border-2">
+    
+                    </div>
+                    <div class="card rounded flex-none border-2">
+    
+                    </div>
+                    <div class="card rounded flex-none border-2">
+                    </div>
+                    <div class="card rounded flex-none border-2">
+                    </div>
+                    
+
+                </div>
+                <div class="right-slide-btn">
+                    <i class="fa-solid fa-chevron-right fa-2x"></i>
+                </div>
+            </div>
+
+            <!-- POST -->
+            {% for post in all_post %}
+            <div class="border rounded p-6 my-5 shadow-md bg-white post-div">
+                <div class="flex items-center gap-4">
+                    <img class="post-owner-image" src="{{post.post_by.profile.image.url}}" alt="">
+                    <span class="text-slate-600">{{post.post_by.profile.first_name}} ,</span>
+                    <span class="text-slate-500">{{post.created_date|date:"d M Y"}}</span>
+                </div>
+                <div class="mt-4 px-3">
+                    <h4 class="font-semibold text-lg">{{post.title}}</h4>
+                    {% if post.image %}
+                    <img class="rounded post-image my-3" src="{{post.image.url}}" alt="">
+                    
+                    {% endif %}
+                    <p class="mt-4">{{post.content}}</p>
+
+                </div>
+                <!-- post like and dislike section -->
+                <div class="my-5">
+
+                    {% if request.user == post.post_by %}
+
+                        <form action="{% url 'all-like-dislike' post.id %}" class="inline" method="get">
+                            
+                            <button data-index="{{post.id}}" class="like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
+                            <button data-index="{{post.id}}" class="dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
+
+                        </form>
+
+                    {%else%}
+
+                        <form action="{% url 'post-like-dislike' post.id %}" class="inline" method="post">
+                            {% csrf_token %}
+                            <button data-index="{{post.id}}" class="like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
+                            <button data-index="{{post.id}}" class="dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
+
+                        </form>
+
+                    {% endif %}
+                    <span class="text-orange-500"><i class="fa-regular fa-comment"></i> <small>Comments</small> (12)</span>
+                    {% if post.post_by == request.user %}
+                    <div class="mt-4 logged-user-btn bg-slate-200 px-2 rounded-sm shadow-md">
+                        <a href="{% url 'post-delete' post.id %}" class="mr-5"><span class="text-red-500 "><i class="fa-solid fa-trash"></i> Delete</span></a>
+                        <a href="{% url 'post-edit' post.id %}"><span class="text-purple-500"><i class="fa-solid fa-pen"></i> Edit</span></a>
+
+                    </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <!-- Comment for post -->
+                    <div>
+                        <div class="text-end">
+                            <a href="{% url 'comment-add' post.id %}"><button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1 rounded text-white"><i class="fa-solid fa-plus"></i> Comment</button></a>
+                        </div>
+                        <!-- <img src="" alt="">
+                        <form action="{% url 'comment-add' post.id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            {{comment_form}}
+                            <div class="flex">
+                                <textarea name="comment_text" type="text" name="" id="" class="w-11/12 border-2 px-2 rounded"></textarea>
+                                <button type="submit" class="border p-3 px-4 ml-4 rounded bg-blue-500 text-zinc-100 text-sm"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>-->
+                            <!-- drop down to select image, gif -->
+                            <!-- <div class="my-4">
+                                <span class="me-5 border-2 px-3 py-1 text-cyan-600">
+                                    <i class="fa-regular fa-image"></i> Photo
+                                    <input name="comment_image" type="file" accept="image/*">
+                                </span>
+                                <span class="px-3 py-1 border-2 text-fuchsia-900"><i class="fa-solid fa-video"></i> Video</span>
+                            </div>
+                        </form>  -->
+                    </div>
+                    <div>
+                        <!-- display all comments -->
+
+                        {% for comment in all_comments %}
+                            
+                            <div>id:{{comment.id}}  {{comment.comment_text}}</div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="rounded shadow-sm border bg-white people-section">
+            <div class="rounded p-3">
+                <h2 class="text-lg font-semibold text-center ">People you may know</h2>
+                {% for user in user_profiles %}
+                    {% if user.user_object.username != 'admin' and user.user_object != request.user %}
+                        
+                            {% csrf_token %}
+                            <div class="my-3 grid grid-cols-3 gap-4 justify-items-center items-center border-2 border-slate-100 rounded-md">
+                                
+                                <img class="all-user-profile-img border-2" src="{{user.image.url}}" alt="">
+                                
+                                {% if user.first_name != None %}
+                                    <span class="capitalize ">{{user.first_name}}</span>
+                                {% else %}
+                                    <span class="capitalize">{{user.user_object.username}}</span>
+                                {% endif %}
+                                <a href="{% url 'other-user-detail' user.id %}">
+                                    <button
+                                    type="button"
+                                    class="follow-btn rounded-full bg-blue-500 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600"
+                                    >
+                                    <i class="fa-solid fa-angles-right"></i>
+                                    </button>
+                                </a>
+
+                            </div>
+                        
+                    {% endif %}
+                {% endfor %}
+                <a href=""><button class="view-more-btn  border rounded bg-indigo-500 hover:bg-indigo-600 text-white py-1">View more</button></a>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+{% endblock %}
+
+
+{% block script_block %}
+
+<script src="{% static 'js/home.js' %}"></script>
+
+{% endblock %}

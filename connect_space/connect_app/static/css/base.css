@@ -1,0 +1,17 @@
+.mynavbar {
+    min-width: 320px;
+    
+}
+
+body {
+    min-width: 320px;
+}
+
+.mynavbar .nav-user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 5px;
+    border: 2px solid white;
+    object-fit: cover;
+}

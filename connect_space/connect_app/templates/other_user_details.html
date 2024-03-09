@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+
+{% block main_content %}
+
+<section>
+    <div class="flex justify-center">
+        <div class="w-7/12 border-2 shadow-md my-5 py-5 px-7">
+            <div class="my-5">
+                <img class="rounded " src="{{data.image.url}}" alt="" style="width: 200px;">
+            </div>
+            
+            {% if data.first_name != None %}
+            <p class="capitalize my-5 text-2xl">{{data.first_name}} {{data.last_name}}</p>
+            {% else %}
+            <p class="capitalize my-5 text-2xl">{{data.user_object.username}}</p>
+            {% endif %}
+            {% if data.bio != None %}
+            <p class="my-5 text-lg">{{data.bio}}</p>
+            {% endif %}
+            <div class="my-5">
+                <span class="mr-10 text-xl">Followers <b>(0)</b></span>
+                <span class="text-xl">Following <b>(0)</b></span>
+            </div>
+            <div class="text-center">
+
+                <a href="" class="mr-5">
+                    <button class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                        <i class="fa-solid fa-plus mr-2"></i> Follow
+                    </button>
+                </a>
+
+                <a href="{% url 'home' %}">
+
+                    <button
+                    type="button"
+                    class="inline-flex items-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-600"
+                    >
+                        <i class="fa-solid fa-arrow-left mr-3"></i>
+        
+                        Home
+                    </button>
+                </a>
+
+                
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+{% endblock main_content %}
