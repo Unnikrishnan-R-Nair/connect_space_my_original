@@ -132,7 +132,9 @@
                     <span class="text-slate-500">{{post.created_date|date:"d M Y"}}</span>
                 </div>
                 <div class="mt-4 px-3">
+                    {% if post.title != None %}
                     <h4 class="font-semibold text-lg">{{post.title}}</h4>
+                    {% endif %}
                     {% if post.image %}
                     <img class="rounded post-image my-3" src="{{post.image.url}}" alt="">
                     
