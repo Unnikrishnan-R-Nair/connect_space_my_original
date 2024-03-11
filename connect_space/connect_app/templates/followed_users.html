@@ -16,17 +16,17 @@
                   
         {% for user in all_followed %}
             
-            <div class="w-full sm:w-10/12 md:w-7/12 my-5 border-2 shadow-md bg-white">
+            <div class="w-full sm:w-10/12 md:w-8/12 my-5 border-2 shadow-md bg-white px-2">
 
                 <div class="my-3 grid grid-cols-3 gap-10 justify-items-center items-center">
                                     
                     <img class="all-user-profile-img border-2" src="{{user.follower.profile.image.url}}" alt="">
                     
                     {% if user.follower.profile.first_name != None %}
-                        <span class="capitalize text-2xl text-gray-600">{{user.follower.profile.first_name}} {{user.follower.profile.last_name}}</span>
+                        <span class="capitalize text-xl lg:text-2xl text-gray-600 ">{{user.follower.profile.first_name}} {{user.follower.profile.last_name}}</span>
                     {% else %}
                         
-                        <span class="capitalize text-2xl text-gray-600">{{user}}</span>
+                        <span class="capitalize text-xl lg:text-2xl text-gray-600 ">{{user}}</span>
                     {% endif %}
                     <a href="{% url 'other-user-detail' user.id %}">
                         <button
