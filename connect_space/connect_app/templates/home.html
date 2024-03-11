@@ -21,16 +21,17 @@
 </section>
 <section>
     <div class="grid grid-cols-6 gap-4 mx-3 sm:mx-10 mt-5 mb-10">
-        <div class="rounded shadow-sm user-section border bg-white" style="height: fit-content;">
+        
+        <div class="rounded shadow-sm user-section border bg-white " style="height: fit-content;">
             <div class="cover-photo">
 
             </div>
-            <div class="user-detail">
+            <div class="user-detail px-1">
                 <div class="text-center">
 
-                    <img width="60px" class="rounded mt-10 mx-auto mb-3 border-white border-2 user-image" src="{{profile_obj.image.url}}" alt="">
+                    <img class="rounded mt-10 mx-auto mb-3 border-white border-2 user-image" src="{{profile_obj.image.url}}" alt="">
                     
-                    {% if profile_obj.first_name != None %}
+                    {% if profile_obj.first_name != None and profile_obj.first_name != 'None' %}
 
                     <h4 class="font-semibold">{{ profile_obj.first_name }} {{profile_obj.last_name}}</h4>
 
@@ -42,18 +43,18 @@
                     
                     
                     <p></p>
-                    <div class="flex mt-5  justify-center">
+                    <div class="flex mt-5 justify-center items-center">
                         <div class="border-r-2 px-4">
-                            <span class="font-bold">{{post_count.total_post}}</span>
-                            <div>Post</div>
+                            <a href="{% url 'my-posts' %}"><span class="font-bold">{{post_count.total_post}}</span></a>
+                            <div>{% if post_count.total_post > 1 %}Posts{% else %}Post{% endif %}</div>
                         </div>
                         <div class="border-r-2 px-4">
-                            <span>Followers</span>
-                            <div>Followers</div>
+                            <a href="{% url 'followed-users' %}"><span class="font-bold">{% if request.user.following.follower_count > 0 %}{{request.user.following.follower_count}}{% else %}0{% endif %}</span></a>
+                            <div>{% if request.user.following.follower_count > 1 %} Followers {% else %} Follower {% endif %}</div>
 
                         </div>
                         <div class=" px-4">
-                            <span>Following</span>
+                            <a href="{% url 'following-users' %}"><span class="font-bold">{% if request.user.following.following_count %}{{request.user.following.following_count}}{% else %}0{% endif %}</span></a>
                             <div>Following</div>
 
                         </div>
@@ -68,6 +69,7 @@
                 
             </div>
         </div>
+        
     
         <div class="post-story-section">
             <div class=" flex gap-5 p-2 px-10 bg-white shadow-md border-2 rounded ">
@@ -126,7 +128,7 @@
             <div class="border rounded p-6 my-5 shadow-md bg-white post-div">
                 <div class="flex items-center gap-4">
                     <img class="post-owner-image" src="{{post.post_by.profile.image.url}}" alt="">
-                    <span class="text-slate-600">{{post.post_by.profile.first_name}} ,</span>
+                    <span class="text-slate-600 capitalize">{% if post.post_by.profile.first_name != None and post.post_by.profile.first_name != 'None' %}{{post.post_by.profile.first_name}} {% else %}{{post.post_by}}{% endif %} ,</span>
                     <span class="text-slate-500">{{post.created_date|date:"d M Y"}}</span>
                 </div>
                 <div class="mt-4 px-3">
@@ -160,7 +162,7 @@
                         </form>
 
                     {% endif %}
-                    <span class="text-orange-500"><i class="fa-regular fa-comment"></i> <small>Comments</small> (12)</span>
+                    <span class="text-orange-500 comment-count-span"><i class="fa-regular fa-comment"></i> <small>Comments</small> {{post.comment_count}}</span>
                     {% if post.post_by == request.user %}
                     <div class="mt-4 logged-user-btn bg-slate-200 px-2 rounded-sm shadow-md">
                         <a href="{% url 'post-delete' post.id %}" class="mr-5"><span class="text-red-500 "><i class="fa-solid fa-trash"></i> Delete</span></a>
@@ -172,8 +174,8 @@
                 <div>
                     <!-- Comment for post -->
                     <div>
-                        <div class="text-end">
-                            <a href="{% url 'comment-add' post.id %}"><button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1 rounded text-white"><i class="fa-solid fa-plus"></i> Comment</button></a>
+                        <div class="text-end mb-2">
+                            <a href="{% url 'comment-add' post.id %}"><button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1 rounded text-white shadow-sm"><i class="fa-solid fa-plus mr-3px"></i> Comment</button></a>
                         </div>
                         <!-- <img src="" alt="">
                         <form action="{% url 'comment-add' post.id %}" method="post" enctype="multipart/form-data">
@@ -194,24 +196,68 @@
                             </div>
                         </form>  -->
                     </div>
-                    <div>
+
+                    {% if post.comment_count > 0 %}
+                    <div class="comment-section p-2 rounded bg-slate-50">
                         <!-- display all comments -->
 
                         {% for comment in all_comments %}
                             
-                            <div>id:{{comment.id}}  {{comment.comment_text}}</div>
+                            {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
+                                <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
+                                    <div class="flex flex-col items-center user-div">
+                                        <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
+                                        <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
+                                        <span></span>
+                                    </div>
+                                    <div>
+                                        {% if comment.comment_image.url != None %}
+                                        <img style="width: 200px;" class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
+                                        {% endif %}
+                                        <p class="my-2">{{comment.comment_text}}</p>
 
+                                    </div>
+                                
+                                </div>
+                            {% elif comment.post_object.id == post.id and comment.comment_by != request.user  %}
+
+                                <div class="flex justify-end">
+
+                                    <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-slate-100">
+                                        <div class="flex flex-col items-center user-div">
+                                            <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt=""> 
+                                            <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
+                                            <span></span>
+                                        </div>
+                                        <div>
+                                            {% if comment.comment_image.url != None %}
+                                            <img style="width: 200px; " class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
+                                            {% endif %}
+                                            <p class="my-2">{{comment.comment_text}}</p>
+
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+
+                            {% endif %}
                         {% endfor %}
+
                     </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
         </div>
 
+        <!-- People you may know -->
+        {% if user_profiles|length > 0 %} 
         <div class="rounded shadow-sm border bg-white people-section">
             <div class="rounded p-3">
                 <h2 class="text-lg font-semibold text-center ">People you may know</h2>
-                {% for user in user_profiles %}
+                
+                <div style="height: 150px; overflow: hidden;">
+                    {% for user in user_profiles %}
                     {% if user.user_object.username != 'admin' and user.user_object != request.user %}
                         
                             {% csrf_token %}
@@ -237,7 +283,56 @@
                         
                     {% endif %}
                 {% endfor %}
-                <a href=""><button class="view-more-btn  border rounded bg-indigo-500 hover:bg-indigo-600 text-white py-1">View more</button></a>
+                </div>
+                
+                <div class="px-2 bg-slate-500">
+                    <a href=""><button class="view-more-btn  border rounded bg-indigo-500 hover:bg-indigo-600 text-white py-1">View more</button></a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <!-- Other userfull links -->
+
+        <div class="rounded shadow-sm border bg-white other-usefull-links mb-4">
+            <h3 class="text-xl font-semibold text-center border-b-2 p-2 bg-slate-300">Useful links</h3>
+            <div class="w-full inner-div">
+                <ul class="list-none no-underline">
+                    <li class="p-3 border-b-2 ">
+                        <a href="https://www.youtube.com/" target="_blank" class="flex justify-center">
+                            <img src="{% static 'media/other/youtube2.png' %}" alt="">
+                        </a>
+                    </li>
+                    <li class="p-3 border-b-2">
+                        <a href="https://www.wikipedia.org/" target="_blank" class="flex justify-center">
+                            <img src="{% static 'media/other/wikipedia-wordmark-en.svg' %}" alt="">
+                        </a>
+                    </li>
+                    <li class="p-3 border-b-2">
+                        <a href="https://www.google.com/" target="_blank" class="flex justify-center">
+                            <img src="{% static 'media/other/googlelogo.png' %}" alt="">
+                        </a>
+                    </li>
+                    <li class="p-3 border-b-2">
+                        <a href="https://stackoverflow.com/" target="_blank" class="flex justify-center">
+                            <img src="{% static 'media/other/stack-overflow2.jpg' %}" alt=""> 
+                        </a>
+                    </li>
+                    <li class="p-3 border-b-2">
+                        <a href="https://chat.openai.com/auth/login" target="_blank" class="flex justify-center">
+                            <img src="{% static 'media/other/chat gpt.png' %}" alt=""> 
+                        </a>
+                    </li>
+                    <li class="p-3 border-b-2">
+                        <a href="https://www.amazon.in/" target="_blank" class="flex justify-center">
+                            <img src="{% static 'media/other/amazon1.png' %}" alt=""> 
+                        </a>
+                    </li>
+                    <li class="p-3 ">
+                        <a href="https://www.flipkart.com/" target="_blank" class="flex justify-center">
+                            <img src="{% static 'media/other/Flipkart-logo1.png' %}" alt=""> 
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

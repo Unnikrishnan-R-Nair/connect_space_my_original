@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+
+{% load static %} 
+
+{% block link_block %}
+<link rel="stylesheet" href="{% static 'css/followed_users.css' %}">
+{% endblock %}
+
+{% block main_content %}
+
+
+<section>
+    <div class="flex justify-center flex-col items-center">  
+                  
+        {% for user in all_followed %}
+            
+            <div class="w-full sm:w-10/12 md:w-7/12 my-5 border-2 shadow-md bg-white">
+
+                <div class="my-3 grid grid-cols-3 gap-10 justify-items-center items-center">
+                                    
+                    <img class="all-user-profile-img border-2" src="{{user.follower.profile.image.url}}" alt="">
+                    
+                    {% if user.follower.profile.first_name != None %}
+                        <span class="capitalize text-2xl text-gray-600">{{user.follower.profile.first_name}} {{user.follower.profile.last_name}}</span>
+                    {% else %}
+                        
+                        <span class="capitalize text-2xl text-gray-600">{{user}}</span>
+                    {% endif %}
+                    <a href="{% url 'other-user-detail' user.id %}">
+                        <button
+                        type="button"
+                        class="follow-btn rounded-full bg-blue-500 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600"
+                        >
+                        <i class="fa-solid fa-angles-right"></i>
+                        </button>
+                    </a>
+
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

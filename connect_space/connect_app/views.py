@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 
 from django.views.generic import View
 
-from connect_app.forms import RegistrationForm, LoginForm, UserProfileForm, PostAddForm, CommentForm
+from connect_app.forms import RegistrationForm, LoginForm, UserProfileForm, PostAddForm, CommentForm, FollowForm
 
 from django.contrib.auth import authenticate, login, logout
 
-from connect_app.models import UserProfile, Post, Comment
+from connect_app.models import UserProfile, Post, Comment, Follow
 
 from connect_app.decorators import signin_required
 
@@ -21,6 +21,8 @@ from django.contrib import messages
 from django.db.models import Count
 
 from django.http import JsonResponse
+
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -116,11 +118,13 @@ class CommentView(View):
         
         comment_by = request.user
 
+        all_comments = Comment.objects.all()
+
         comment_obj = Comment(comment_by=request.user, post_object=post_obj)
 
         form = CommentForm(instance=comment_obj)
 
-        return render(request, 'comment_add.html', {'comment_form': form})
+        return render(request, 'comment_add.html', {'comment_form': form, 'post': post_obj, 'all_comments': all_comments})
     
   
     def post(self, request, *args, **kwargs):
@@ -128,8 +132,10 @@ class CommentView(View):
         id = kwargs.get('pk')
 
         post_obj = Post.objects.get(id=id)
-        
+
         comment_by = request.user
+
+        all_comments = Comment.objects.all()
 
         comment_obj = Comment(comment_by=request.user, post_object=post_obj)
 
@@ -141,7 +147,7 @@ class CommentView(View):
 
             return redirect('home')
 
-        return render(request, 'comment_add.html', {'comment_form': form})
+        return render(request, 'comment_add.html', {'comment_form': form, 'post': post_obj, 'all_comments': all_comments})
 
 
 class SignInView(View):
@@ -219,13 +225,146 @@ class ProfileView(View):
     
 class OtherUserDetailView(View):
 
-    def get(self, request, *args, **kwargs):
+     def get(self, request, *args, **kwargs):
 
         id = kwargs.get('pk')
 
         data = UserProfile.objects.get(id=id)
 
-        return render(request, 'other_user_details.html', {'data': data})
+        try:
+
+            follow_obj = Follow.objects.get(follower=request.user)
+        
+        except:
+
+            follow_obj = Follow.objects.create(follower=request.user)
+
+            follow_obj.save()
+
+
+        is_following = False
+
+        if follow_obj.follows.contains(data.user_object):
+
+            is_following = True
+
+
+        return render(request, 'other_user_details.html', {'data': data, 'is_following': is_following})
+  
+        
+
+class FollowUserView(View):
+    
+    def post(self, request, *args, **kwargs):
+
+        id = kwargs.get('pk')
+
+        follow_profile_obj = UserProfile.objects.get(id=id)
+
+        try:
+        
+            follow_obj = Follow.objects.create(follower=request.user)
+
+            follow_obj.save()
+
+        except:
+
+            follow_obj = Follow.objects.get(follower=request.user)
+
+
+        follow_obj.follows.add(follow_profile_obj.user_object)
+
+        follow_obj.save()
+
+        return redirect('home')
+
+
+class UnFollowUserView(View):
+
+    def post(self, request, *args, **kwargs):
+
+        id = kwargs.get('pk')
+
+        followed_by_user = UserProfile.objects.get(id=id)
+
+        follow_obj = Follow.objects.get(follower=request.user)
+
+        follow_obj.follows.remove(followed_by_user.user_object)
+
+        return redirect('home')
+    
+
+
+# all users in database except admin
+class AllUserView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        all_users = User.objects.all().exclude(username='admin')
+
+        login_following_users = Follow.objects.get(follower=request.user).follows.all()
+
+        print(login_following_users)
+
+        login_user_followers = Follow.objects.filter(follows=request.user)
+
+        print(login_user_followers)
+
+        return render(request, 'all_user.html', {'all_users': all_users})
+
+
+
+# all following users
+class FollowingUsersView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        try:
+
+            login_following_users = Follow.objects.get(follower=request.user).follows.all()
+
+        except:
+
+            follow_obj = Follow.objects.create(follower=request.user)
+
+            follow_obj.save()
+
+            login_following_users = Follow.objects.get(follower=request.user).follows.all()
+
+
+        print(login_following_users)
+
+        return render(request, 'following_users.html', {'all_following': login_following_users})
+    
+
+
+# all followed users
+class FollowedUsersView(View):
+
+    def get(self, request, *args, **kwargs):
+
+         
+
+        try:
+
+            # login_user_followers = Follow.objects.all().filter(follows=request.user)
+
+            login_user_followers = request.user.followers.all()
+            print(login_user_followers)
+
+        except:
+            
+            follow_obj = Follow.objects.create(follower=request.user)
+
+            follow_obj.save()
+
+            # login_user_followers = Follow.objects.all().filter(follows=request.user)
+
+
+        # print(login_user_followers)
+
+        return render(request, 'followed_users.html', {'all_followed': login_user_followers})
+
 
 
 class PostAddView(View):
@@ -363,6 +502,8 @@ class LoggedInUserAllLikesDislikesView(View):
 
         post_obj = Post.objects.get(id=id)
 
+        all_comments = Comment.objects.all()
+
         # print(request.GET.get('like-dislike'))
 
         action = request.GET.get('like-dislike')
@@ -377,14 +518,21 @@ class LoggedInUserAllLikesDislikesView(View):
 
         # print(all_user)
 
-        return render(request, 'all_likes.html', {'all_user': all_user, 'action': action})
+        return render(request, 'all_likes.html', {'all_user': all_user, 'action': action, 'post': post_obj, 'all_comments': all_comments})
 
 
-class FollowUserView(View):
+# all post of user
+class MyPostsView(View):
 
     def get(self, request, *args, **kwargs):
 
-        return redirect('other-user-detail')
+        all_posts = Post.objects.filter(post_by=request.user)
+
+        all_comments = Comment.objects.all()
+
+        return render(request, 'my_post.html', {'all_posts': all_posts, 'all_comments': all_comments})
+    
+
 
 # search people   
 

@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from django.contrib.auth.forms import UserCreationForm
 
-from connect_app.models import UserProfile, Post, Comment
+from connect_app.models import UserProfile, Post, Comment, Follow
 
 
 class RegistrationForm(UserCreationForm):
@@ -48,5 +48,14 @@ class CommentForm(forms.ModelForm):
 
         model = Comment
 
-        exclude = ('created_date', 'updated_date', 'is_active',)
+        exclude = ('created_date', 'updated_date', 'is_active', 'comment_by', 'post_object',)
 
+
+
+class FollowForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Follow
+
+        exclude = ('created_date', 'updated_date', 'is_active',)

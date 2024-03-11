@@ -49,10 +49,10 @@
               </li>
               <li>
                 <a
-                  href="#"
+                  href="{% url 'all-user' %}"
                   class="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
-                  Contact
+                  All users
                 </a>
               </li>
               {% else %}
@@ -79,18 +79,24 @@
           </div>
           <div class="hidden lg:block">
             {% if user.is_authenticated %}
-            <img class="inline nav-user-image" src="{{request.user.profile.image.url}}" alt="">
-            <!-- <span class="me-5 capitalize text-white">{{request.user}}</span> -->
-            <a
-              href="{% url 'signout' %}"
-              class="rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            >
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-            </a>
+              
+              <img class="inline nav-user-image" src="{{request.user.profile.image.url}}" alt="">
+              
+              <!-- <span class="me-5 capitalize text-white">{{request.user}}</span> -->
+              <a
+                href="{% url 'signout' %}"
+                class="rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              >
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+              </a>
+              
             {% endif %}
           </div>
           <div class="lg:hidden hamburger-btn flex items-center">
+
+            {% if user.is_authenticated %}
             <img class="inline nav-user-image" src="{{request.user.profile.image.url}}" alt="">
+            {% endif %}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

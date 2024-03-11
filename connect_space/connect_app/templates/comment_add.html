@@ -6,7 +6,7 @@
 
 {% block link_block %}
 
-<link rel="stylesheet" href="">
+<link rel="stylesheet" href="{% static 'css/comment_add.css' %}">
 
 {% endblock %}
 
@@ -14,6 +14,134 @@
 
 <section>
     <div class="flex justify-center">
+        <div class="w-full md:w-7/12 xl:w-6/12 my-2">
+            <div class="border rounded p-6 my-5 shadow-md bg-white post-div">
+                <div class="flex items-center gap-4">
+                    <img class="post-owner-image" src="{{post.post_by.profile.image.url}}" alt="">
+                    <span class="text-slate-600">{{post.post_by.profile.first_name}} ,</span>
+                    <span class="text-slate-500">{{post.created_date|date:"d M Y"}}</span>
+                </div>
+                <div class="mt-4 px-3">
+                    <h4 class="font-semibold text-lg">{{post.title}}</h4>
+                    {% if post.image %}
+                    <img class="rounded post-image my-3" src="{{post.image.url}}" alt="">
+                    
+                    {% endif %}
+                    <p class="mt-4">{{post.content}}</p>
+
+                </div>
+                <!-- post like and dislike section -->
+                <div class="my-5">
+
+                    {% if request.user == post.post_by %}
+
+                        <form action="{% url 'all-like-dislike' post.id %}" class="inline" method="get">
+                            
+                            <button data-index="{{post.id}}" class="like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
+                            <button data-index="{{post.id}}" class="dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
+
+                        </form>
+
+                    {%else%}
+
+                        <form action="{% url 'post-like-dislike' post.id %}" class="inline" method="post">
+                            {% csrf_token %}
+                            <button data-index="{{post.id}}" class="like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
+                            <button data-index="{{post.id}}" class="dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
+
+                        </form>
+
+                    {% endif %}
+                    <span class="text-orange-500"><i class="fa-regular fa-comment"></i> <small>Comments</small> ({{post.comment_count}})</span>
+                    {% if post.post_by == request.user %}
+                    <div class="mt-4 logged-user-btn bg-slate-200 px-2 rounded-sm shadow-md">
+                        <a href="{% url 'post-delete' post.id %}" class="mr-5"><span class="text-red-500 "><i class="fa-solid fa-trash"></i> Delete</span></a>
+                        <a href="{% url 'post-edit' post.id %}"><span class="text-purple-500"><i class="fa-solid fa-pen"></i> Edit</span></a>
+
+                    </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <!-- Comment for post -->
+                    <div>
+                        
+                        <!-- <img src="" alt="">
+                        <form action="{% url 'comment-add' post.id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            {{comment_form}}
+                            <div class="flex">
+                                <textarea name="comment_text" type="text" name="" id="" class="w-11/12 border-2 px-2 rounded"></textarea>
+                                <button type="submit" class="border p-3 px-4 ml-4 rounded bg-blue-500 text-zinc-100 text-sm"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>-->
+                            <!-- drop down to select image, gif -->
+                            <!-- <div class="my-4">
+                                <span class="me-5 border-2 px-3 py-1 text-cyan-600">
+                                    <i class="fa-regular fa-image"></i> Photo
+                                    <input name="comment_image" type="file" accept="image/*">
+                                </span>
+                                <span class="px-3 py-1 border-2 text-fuchsia-900"><i class="fa-solid fa-video"></i> Video</span>
+                            </div>
+                        </form>  -->
+                    </div>
+
+                    {% if post.comment_count > 0 %}
+                    <div class="comment-section p-2 rounded bg-slate-50">
+                        <!-- display all comments -->
+
+                        {% for comment in all_comments %}
+                            
+                            {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
+                                <div class="comment flex items-center gap-5 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
+
+                                    <div class="flex flex-col items-center user-div">
+                                        <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
+                                        <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
+                                        <span></span>
+                                    </div> 
+
+                                    <div>
+                                        {% if comment.comment_image.url != None %}
+                                        <img style="width: 200px; " class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
+                                        {% endif %}
+                                        <p class="my-2">{{comment.comment_text}}</p>
+
+                                    </div>
+                                
+                                </div>
+                            {% elif comment.post_object.id == post.id and comment.comment_by != request.user  %}
+
+                                <div class="flex justify-end">
+
+                                    <div class="comment flex items-center gap-5 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-slate-100">
+
+                                        <div class="flex flex-col items-center user-div">
+                                            <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
+                                            <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
+                                            <span></span>
+                                        </div>     
+                                        <div>
+                                            {% if comment.comment_image.url != None %}
+                                            <img style="width: 200px; " class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
+                                            {% endif %}
+                                            <p class="my-2">{{comment.comment_text}}</p>
+
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-center">
+    
         <div class="w-full md:w-7/12 xl:w-6/12 my-10 mb-16 p-3 shadow border-2 rounded bg-white">
             <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}

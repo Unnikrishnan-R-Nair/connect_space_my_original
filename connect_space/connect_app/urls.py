@@ -27,5 +27,17 @@ urlpatterns = [
 
     path('connect_space/post/<int:pk>/comment/add/', views.CommentView.as_view(), name='comment-add'),
 
+    path('connect_space/user/<int:pk>/follow/', views.FollowUserView.as_view(), name='follow-user'),
+
+    path('connect_space/user/<int:pk>/un-follow/', views.UnFollowUserView.as_view(), name='un-follow-user'),
+
+    path('connect_space/all-users/', views.AllUserView.as_view(), name='all-user'),
+
+    path('connect_space/users/following/', views.FollowingUsersView.as_view(), name='following-users'),
+
+    path('connect_space/users/followers/', views.FollowedUsersView.as_view(), name='followed-users'),
+
+    path('connect_space/users/posts/all/', views.MyPostsView.as_view(), name='my-posts'),
+
 
 ]
