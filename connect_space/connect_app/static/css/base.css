@@ -15,3 +15,16 @@ body {
     border: 2px solid white;
     object-fit: cover;
 }
+
+@media (max-width:425px) {
+    
+    .mynavbar .mobile-post-add-btn,
+    .mynavbar .mobile-home-btn {
+        display: none;
+    }
+
+    .mynavbar .mobile-secondary-post-add-btn {
+        display:block
+    }
+
+}

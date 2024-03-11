@@ -28,8 +28,8 @@
                     
                     <form action="{% url 'un-follow-user' data.id  %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
-                             Un-follow
+                        <button type="submit" class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
+                            <i class="fa-solid fa-check"></i> Following
                         </button>
                     </form>
                 

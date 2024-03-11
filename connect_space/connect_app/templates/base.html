@@ -26,7 +26,7 @@
                 </span>
                 <span class="text-lg font-bold italic text-red-400">S</span>
             </span>
-            <span class="font-bold text-lg">Connect <span class="italic text-slate-100">Space</span></span>
+            <a href="{% url 'home' %}"><span class="font-bold text-lg">Connect <span class="italic text-slate-100">Space</span></span></a>
           </div>
           <div class="hidden grow items-start lg:flex">
             <ul class="ml-12 inline-flex space-x-8">
@@ -36,7 +36,7 @@
                   href="{% url 'home' %}"
                   class="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
-                  Home
+                <i class="fa-solid fa-house"></i> Home
                 </a>
               </li>
               <li>
@@ -44,15 +44,31 @@
                   href="{% url 'myprofile' %}"
                   class="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
-                    My Profile
+                <i class="fa-solid fa-user"></i>  My Profile
                 </a>
               </li>
               <li>
                 <a
-                  href="{% url 'all-user' %}"
+                  href="{% url 'post-add' %}"
                   class="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
-                  All users
+                <i class="fa-solid fa-plus"></i> Post
+                </a>
+              </li>
+              <li>
+                <a
+                  href="{% url 'following-users' %}"
+                  class="text-sm font-semibold text-gray-800 hover:text-gray-900"
+                >
+                 Following
+                </a>
+              </li>
+              <li>
+                <a
+                  href="{% url 'followed-users' %}"
+                  class="text-sm font-semibold text-gray-800 hover:text-gray-900"
+                >
+                 Followers
                 </a>
               </li>
               {% else %}
@@ -92,27 +108,33 @@
               
             {% endif %}
           </div>
-          <div class="lg:hidden hamburger-btn flex items-center">
-
-            {% if user.is_authenticated %}
-            <img class="inline nav-user-image" src="{{request.user.profile.image.url}}" alt="">
-            {% endif %}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-6 w-6 cursor-pointer sm:mx-5"
-            >
-              <line x1="4" y1="12" x2="20" y2="12"></line>
-              <line x1="4" y1="6" x2="20" y2="6"></line>
-              <line x1="4" y1="18" x2="20" y2="18"></line>
-            </svg>
+          <div class="flex items-center">
+            <a href="{% url 'home' %}" class="lg:hidden mobile-home-btn"><i class="fa-solid fa-house"></i></a>
+            <a href="{% url 'post-add' %}" class="mx-5 lg:hidden mobile-post-add-btn"><i class="fa-solid fa-plus"></i> <span>Post</span></a> 
+            <div class="lg:hidden hamburger-btn flex items-center">
+  
+              {% if user.is_authenticated %}
+  
+              
+              <img class="inline nav-user-image" src="{{request.user.profile.image.url}}" alt="">
+              {% endif %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-6 w-6 cursor-pointer sm:mx-5"
+              >
+                <line x1="4" y1="12" x2="20" y2="12"></line>
+                <line x1="4" y1="6" x2="20" y2="6"></line>
+                <line x1="4" y1="18" x2="20" y2="18"></line>
+              </svg>
+            </div>
           </div>
         </div>
         <div class="py-4 mobile-navbar hidden">
@@ -123,7 +145,7 @@
                   href="{% url 'home' %}"
                   class="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
-                  Home
+                <i class="fa-solid fa-house"></i> Home
                 </a>
               </li>
               <li>
@@ -131,15 +153,32 @@
                   href="{% url 'myprofile' %}"
                   class="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
-                  My Profile
+                <i class="fa-solid fa-user"></i> My Profile
                 </a>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="{% url 'post-add' %}"
                   class="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
-                  Contact
+                <i class="fa-solid fa-plus"></i> Post
+                </a>
+              </li>
+              <li>
+                <a
+                  href="{% url 'following-users' %}"
+                  class="text-sm font-semibold text-gray-800 hover:text-gray-900"
+                >
+                 Following
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="{% url 'followed-users' %}"
+                  class="text-sm font-semibold text-gray-800 hover:text-gray-900"
+                >
+                 Followers
                 </a>
               </li>
               {% else %}
@@ -176,8 +215,17 @@
                     <!-- <span class=" capitalize text-white">{{request.user}}</span> -->
                     
                 </div>
+                
                 {% endif %}
-              </div>
+  
+            </div>
+        </div>
+        <div class="text-center p-2 border-2 border-slate-200 shadow-md hidden mobile-secondary-post-add-btn">
+          <li class="list-none">
+              <a href="{% url 'post-add' %}">
+                <i class="fa-solid fa-plus"></i> Post
+              </a>
+          </li>
         </div>
       </div>
       

@@ -165,11 +165,6 @@ class Follow(models.Model):
     
 
 
-   
-    
-
-
-
 # class Story(models.Model):
 
 #     user_object = models.ForeignKey(User, on_delete=models.CASCADE)

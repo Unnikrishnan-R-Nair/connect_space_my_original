@@ -276,7 +276,7 @@ class FollowUserView(View):
 
         follow_obj.save()
 
-        return redirect('home')
+        return redirect('following-users')
 
 
 class UnFollowUserView(View):
@@ -291,7 +291,7 @@ class UnFollowUserView(View):
 
         follow_obj.follows.remove(followed_by_user.user_object)
 
-        return redirect('home')
+        return redirect('following-users')
     
 
 
