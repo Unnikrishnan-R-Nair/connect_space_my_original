@@ -9,7 +9,8 @@
 {% block main_content %}
 
 <section>
-    <div class="flex justify-center">
+    <div class="flex justify-center items-center flex-col">
+        <h3 class="text-center text-3xl font-semibold text-gray-600 my-5"><span class="bg-slate-300 px-4 py-1 rounded"><i>My</i> <b class="font-bold">Posts</b>:</span></h3> 
         <div class="w-11/12 sm:w-10/12  md:w-8/12">
             <!-- POST -->
             {% for post in all_posts %}
