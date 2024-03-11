@@ -1,6 +1,6 @@
 .mynavbar {
     min-width: 320px;
-    
+  
 }
 
 body {
@@ -14,6 +14,17 @@ body {
     margin-right: 5px;
     border: 2px solid white;
     object-fit: cover;
+}
+
+.mynavbar.after-scroll {
+    transform: translateY(-57px);
+}
+.mynavbar.navhover {
+    transform: translatey(0px);
+}
+
+small.designed {
+    font-size: 11px;
 }
 
 @media (max-width:425px) {
