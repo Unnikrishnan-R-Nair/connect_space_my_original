@@ -549,10 +549,11 @@ class SearchPeopleView(View):
         if request.GET.get('action') == 'get':
 
             search_text = request.GET.get('search_text')
+            print(search_text)
 
-        all_u = UserProfile.objects.filter(first_name__contains=search_text, last_name__contains=search_text).exclude(first_name=request.user.profile.first_name)
+        all_u = UserProfile.objects.filter(first_name__contains=search_text).exclude(first_name=request.user.profile.first_name) or UserProfile.objects.filter(last_name__startswith=search_text).exclude(last_name=request.user.profile.last_name)
 
-        data = serializers.serialize("json", list(all_u), fields=('first_name', 'last_name'))
+        data = serializers.serialize("json", list(all_u), fields=('first_name', 'last_name',))
         # print(data)
 
         filter_result = json.dumps(data)

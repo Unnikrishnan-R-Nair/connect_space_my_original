@@ -355,12 +355,13 @@
     document.querySelector('.search-btn').addEventListener('click', function(e){
         console.log('clicked')
         e.preventDefault()
+        console.log(document.querySelector('.search-box').value)
 
         $.ajax({
             type: 'get',
             url: "{% url 'search-people' %}",
             data: {
-                search_text: this.value,
+                search_text: document.querySelector('.search-box').value,
                 action: 'get',
             },
 
