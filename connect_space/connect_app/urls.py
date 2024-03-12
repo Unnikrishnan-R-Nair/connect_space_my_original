@@ -39,5 +39,9 @@ urlpatterns = [
 
     path('connect_space/users/posts/all/', views.MyPostsView.as_view(), name='my-posts'),
 
+    # search user
+    path('search/', views.SearchPeopleView.as_view(), name='search-people'),
+
+
 
 ]

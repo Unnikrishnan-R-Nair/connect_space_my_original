@@ -24,6 +24,10 @@ from django.http import JsonResponse
 
 from django.contrib.auth.models import User
 
+import json
+
+from django.core import serializers
+
 # Create your views here.
 
 class SignUpView(View):
@@ -61,7 +65,7 @@ class HomeView(View):
         # comment
 
         all_user_profiles = UserProfile.objects.all()
-
+       
         profile_obj = UserProfile.objects.get(user_object=request.user)
 
         all_post_obj = Post.objects.all()
@@ -72,23 +76,6 @@ class HomeView(View):
 
         logged_in_user_post_count = logged_in_user_post.aggregate(total_post=Count('id'))  
 
-        # each_post = all_post_obj.annotate(each_post=Count('id'))
-
-        # print(each_post)
-
-        # post_like_dict = {} 
-
-        # for p in all_post_obj:
-
-        #     print(p.liked_by.aggregate(likes=Count('id')))
-
-        #     post_like_dict[p.id] = p.liked_by.aggregate(likes=Count('id'))
-
-        # print(post_like_dict)
-
-        # print(logged_in_user_post_count ) 
-
-
         # Comment
 
         # comment_obj1 = Comment(comment_by=request.user, post_object=Post.objects.get(id=2))
@@ -96,6 +83,15 @@ class HomeView(View):
         all_comment_obj = Comment.objects.all()
 
         # comment_form = CommentForm(instance=comment_obj1)
+
+
+        # search 
+        
+        # search_text = request.GET.get('q') or ''
+        # user_profile_objects = None
+        # if search_text:
+
+        #     user_profile_objects = UserProfile.objects.filter(first_name__icontains=search_text)
 
         return render(request, 'home.html',{
 
@@ -105,7 +101,14 @@ class HomeView(View):
                                             'user_profiles': all_user_profiles, 
                                             # 'comment_form': comment_form,
                                             'all_comments': all_comment_obj,
+
+                                            # 'search_results': user_profile_objects,
+                                            # 'search_text': search_text,
+                                            
                                             })
+    
+
+
 
 # comment view
 class CommentView(View):
@@ -204,6 +207,7 @@ class ProfileView(View):
     
     def post(self, request, *args, **kwargs):
 
+
         profile_object = UserProfile.objects.get(user_object=request.user)
 
         form = UserProfileForm(request.POST, files=request.FILES, instance=profile_object)
@@ -215,10 +219,13 @@ class ProfileView(View):
             messages.success(request, 'Profile updated.')
 
             return redirect('myprofile')
+
         
         messages.error(request, 'Profile not updated! Try again.')
 
         return render(request, 'profile.html', {'form': form})
+
+
 
 
 # other user details view
@@ -534,15 +541,25 @@ class MyPostsView(View):
     
 
 
-# search people   
-
 class SearchPeopleView(View):
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
 
-        profile_obj = UserProfile.objects.get(first_name__icontains=request.post)
+        search_text = ''
+        if request.GET.get('action') == 'get':
 
-        return redirect('home')
+            search_text = request.GET.get('search_text')
 
+        all_u = UserProfile.objects.filter(first_name__contains=search_text, last_name__contains=search_text).exclude(first_name=request.user.profile.first_name)
 
+        data = serializers.serialize("json", list(all_u), fields=('first_name', 'last_name'))
+        # print(data)
+
+        filter_result = json.dumps(data)
+
+        # print(filter_result)
+
+        response = JsonResponse({'success': 'success', 'data':data})
+
+        return response
 

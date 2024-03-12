@@ -109,7 +109,7 @@ class Comment(models.Model):
 
     post_object = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment_for_post')
 
-    comment_text = models.TextField(null=True, blank=True)
+    comment_text = models.TextField()
     
     comment_image = models.ImageField(upload_to='images/comment_image/', blank=True, null=True)
 

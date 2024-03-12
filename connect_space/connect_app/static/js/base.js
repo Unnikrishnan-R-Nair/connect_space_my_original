@@ -24,14 +24,14 @@ window.addEventListener('scroll', function(e){
 
 
 document.querySelector('.mynavbar').addEventListener('mouseenter', function(e){
-    console.log('entered');
+    // console.log('entered');
     this.classList.add('navhover')
     this.style.paddingBottom = 'initial';
 
 
 })
 document.querySelector('.mynavbar').addEventListener('mouseleave', function(e){
-    console.log('left');
+    // console.log('left');
     this.classList.remove('navhover')
     if (window.scrollY < 100){
         this.style.paddingBottom = 'initial';
@@ -41,3 +41,4 @@ document.querySelector('.mynavbar').addEventListener('mouseleave', function(e){
     }
 
 })
+

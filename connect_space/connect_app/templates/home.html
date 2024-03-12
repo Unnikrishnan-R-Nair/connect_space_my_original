@@ -10,15 +10,17 @@
 
 {% block main_content %}
 <section>
+
     <div class="py-3 bg-slate-300 text-center">
-        <form action="" method="post">
-            {% csrf_token %}
-            <input type="text" placeholder="Search people" class="w-6/12 p-1 rounded">
-            <button type="submit" class="px-4 py-1 rounded border border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">Search</button>
-        </form>
-        
+        <form method="get" class="search-form  w-8/12  sm:6/12 md:w-6/12 lg:w-4/12 mx-auto">             
+                <input class="search-box w-full p-1 rounded" type="text" placeholder="Search people" name="q" autocomplete="off" autofocus>
+                <button  type="submit" class="hidden search-btn px-4 py-1 rounded border border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">Search</button>   
+                <div class="search-result w-full border-2 bg-slate-400 shadow-lg hidden"></div>
+        </form>             
     </div>
 </section>
+
+
 <section>
     <div class="grid grid-cols-6 gap-4 mx-3 sm:mx-10 mt-5 mb-10">
         
@@ -347,5 +349,59 @@
 {% block script_block %}
 
 <script src="{% static 'js/home.js' %}"></script>
+
+<script>
+
+    document.querySelector('.search-btn').addEventListener('click', function(e){
+        console.log('clicked')
+        e.preventDefault()
+
+        $.ajax({
+            type: 'get',
+            url: "{% url 'search-people' %}",
+            data: {
+                search_text: this.value,
+                action: 'get',
+            },
+
+            success: function(json) {
+                //console.log(json)
+                //console.log(typeof json.data)
+                //console.log(JSON.parse(json.data))
+
+                let container = document.querySelector('.search-result')
+                container.classList.remove('hidden')
+                let elem = ''
+                for ( let eachData of JSON.parse(json.data) ){
+                    console.log(eachData)
+                    elem = `
+                        <a href="connect_space/user/${eachData.pk}/">
+                            <li class="list-none border-b-2"><span>${eachData.fields.first_name} ${eachData.fields.last_name}</span></li> 
+                        </a>
+                    `
+                    
+                    container.innerHTML += elem    
+                }
+                
+            },
+
+            error: function(xhr, errmsg, err) {
+
+            }
+        })
+    })
+
+    document.querySelector('.search-box').addEventListener('keyup', function(e){
+        if(this.value == '') {
+    
+            document.querySelector('.search-result').innerHTML = '';
+            document.querySelector('.search-result').classList.add('hidden')
+
+        }
+    })
+   
+</script>
+
+
 
 {% endblock %}

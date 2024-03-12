@@ -1,10 +1,11 @@
 .mynavbar {
     min-width: 320px;
-  
+    z-index: 10;
 }
 
 body {
     min-width: 320px;
+    
 }
 
 .mynavbar .nav-user-image {
@@ -27,6 +28,10 @@ small.designed {
     font-size: 11px;
 }
 
+footer div {
+    min-width: 320px;
+}
+
 @media (max-width:425px) {
     
     .mynavbar .mobile-post-add-btn,
@@ -35,7 +40,9 @@ small.designed {
     }
 
     .mynavbar .mobile-secondary-post-add-btn {
-        display:block
+        display:block;
+        border-inline:none;
+        
     }
 
 }
