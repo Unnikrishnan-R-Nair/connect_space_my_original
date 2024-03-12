@@ -26,17 +26,17 @@
 
                 {% if is_following %}
                     
-                    <form action="{% url 'un-follow-user' data.id  %}" method="post">
+                    <form action="" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
+                        <button type="submit" class="unfollow-btn rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
                             <i class="fa-solid fa-check"></i> Following
                         </button>
                     </form>
                 
                 {% else %}
-                <form action="{% url 'follow-user' data.id  %}" method="post">
+                <form action="" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                    <button type="submit" class="follow-btn rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                         <i class="fa-solid fa-plus mr-1"></i> Follow
                     </button>
                 </form>
@@ -65,3 +65,67 @@
 
 
 {% endblock main_content %}
+
+
+{% block script_block %}
+
+<script>
+    // un-follow user
+    document.querySelector('.unfollow-btn').addEventListener('click', function(e){
+        console.log('clicked')
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "unfollow" %}',
+
+            data: {
+                user_id: '{{data.id}}',
+                csrfmiddlewaretoken: '{{csrf_token}}',
+                action: 'post',
+            },
+
+            success: function(json){
+                location.reload();
+                console.log(json)
+            },
+            error: function(xhr, errmsg, err){
+                console.log(err)
+            },
+        });
+    })
+
+</script>
+
+<script>
+
+    // follow-user
+
+    document.querySelector('.follow-btn').addEventListener('click', function(e){
+        e.preventDefault();
+        $.ajax({
+
+            type: 'POST',
+            url: '{% url "follow" %}',
+            data: {
+                user_id: '{{data.id}}',
+                csrfmiddlewaretoken: '{{csrf_token}}',
+                action: 'post',
+            },
+
+            success: function(json){
+                location.reload();
+                console.log(json)
+            },
+
+            error: function(xhr, errmsg, err){
+                console.log(errmsg);
+            },
+
+        })
+
+    })
+
+
+</script>
+
+{% endblock %}

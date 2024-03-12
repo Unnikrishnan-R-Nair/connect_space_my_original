@@ -42,6 +42,20 @@ urlpatterns = [
     # search user
     path('search/', views.SearchPeopleView.as_view(), name='search-people'),
 
+    # ajax unfollow
 
+    path('unfollow/', views.UnFollowOtherUserView.as_view(), name='unfollow'),
+    
+    # ajax follow
+
+    path('follow/', views.FollowOtherUserView.as_view(), name='follow'),
+
+    # ajax like 
+
+    path('like/', views.PostLikeView.as_view(), name='like'),
+
+    # ajax dislike
+
+    path('dislike/', views.PostDislikeView.as_view(), name='dislike'),
 
 ]

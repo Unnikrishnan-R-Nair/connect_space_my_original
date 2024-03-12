@@ -284,6 +284,43 @@ class FollowUserView(View):
         follow_obj.save()
 
         return redirect('following-users')
+    
+
+# ajax requests
+    
+class FollowOtherUserView(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if request.POST.get('action') == 'post':
+
+            user_id = request.POST.get('user_id')
+
+            follow_user = User.objects.get(id=user_id)
+
+            request.user.following.follows.add(follow_user)
+
+            response = JsonResponse({'msg': 'following'})
+
+            return response
+
+# ajax request
+        
+class UnFollowOtherUserView(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if request.POST.get('action') == 'post':
+
+            user_id = request.POST.get('user_id')
+
+            unfollow_user = User.objects.get(id=user_id)
+
+            request.user.following.follows.remove(unfollow_user)
+
+            response = JsonResponse({'msg': 'unfollowed'})
+
+            return response
 
 
 class UnFollowUserView(View):
@@ -349,9 +386,7 @@ class FollowingUsersView(View):
 class FollowedUsersView(View):
 
     def get(self, request, *args, **kwargs):
-
-         
-
+        
         try:
 
             # login_user_followers = Follow.objects.all().filter(follows=request.user)
@@ -442,7 +477,7 @@ class PostEditView(View):
         return render(request, 'post_edit.html', {'form':form})
     
 
-# post like and dislike
+# post like and dislike (normal)
 class PostLikeDislikeView(View):
 
     def post(self, request, *args, **kwargs):
@@ -501,6 +536,89 @@ class PostLikeDislikeView(View):
 
 
 
+# like post with ajax 
+    
+class PostLikeView(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if request.POST.get('action') == 'post':
+
+            post_id = request.POST.get('post_id')
+
+            post_object = Post.objects.get(id=post_id)
+
+            if post_object.disliked_by.contains(request.user):
+
+                post_object.disliked_by.remove(request.user)
+
+
+            if not post_object.liked_by.contains(request.user):
+
+                post_object.liked_by.add(request.user)
+
+                current_like_count = post_object.liked_by.all().count()
+
+                current_dislike_count = post_object.disliked_by.all().count()
+
+                response = JsonResponse({'msg': 'liked', 'like_count': current_like_count, 'dislike_count': current_dislike_count, 'post_id': post_id})
+
+                return response
+            
+            elif post_object.liked_by.contains(request.user):
+
+                post_object.liked_by.remove(request.user)
+
+                current_like_count = post_object.liked_by.all().count()
+
+                current_dislike_count = post_object.disliked_by.all().count()
+                
+                response = JsonResponse({'msg': 'like removed', 'like_count': current_like_count, 'dislike_count': current_dislike_count, 'post_id': post_id})
+
+                return response
+            
+# ajax dilike
+            
+class PostDislikeView(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if request.POST.get('action') == 'post':
+
+            post_id = request.POST.get('post_id')
+
+            post_object = Post.objects.get(id=post_id)
+
+            if post_object.liked_by.contains(request.user):
+
+                post_object.liked_by.remove(request.user)
+
+            if not post_object.disliked_by.contains(request.user):
+
+                post_object.disliked_by.add(request.user)
+
+                current_dislike_count = post_object.disliked_by.all().count()
+
+                current_like_count = post_object.liked_by.all().count()
+
+                response = JsonResponse({'msg': 'disliked', 'dislike_count': current_dislike_count, 'like_count': current_like_count, 'post_id': post_id})
+
+                return response
+            
+            elif post_object.disliked_by.contains(request.user):
+                
+                post_object.disliked_by.remove(request.user)
+
+                current_dislike_count = post_object.disliked_by.all().count()
+
+                current_like_count = post_object.liked_by.all().count()
+
+                response = JsonResponse({'msg': 'dislike removed', 'dislike_count': current_dislike_count, 'like_count': current_like_count, 'post_id': post_id})
+
+                return response
+                
+
+
 class LoggedInUserAllLikesDislikesView(View):
 
     def get(self, request, *args, **kwargs):
@@ -556,7 +674,7 @@ class SearchPeopleView(View):
         data = serializers.serialize("json", list(all_u), fields=('first_name', 'last_name',))
         # print(data)
 
-        filter_result = json.dumps(data)
+        # filter_result = json.dumps(data)
 
         # print(filter_result)
 

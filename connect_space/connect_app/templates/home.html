@@ -149,19 +149,19 @@
 
                     {% if request.user == post.post_by %}
 
-                        <form action="{% url 'all-like-dislike' post.id %}" class="inline" method="get">
+                        <form action="{% url 'all-like-dislike' post.id  %}" class="inline" method="get">
                             
-                            <button data-index="{{post.id}}" class="like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
-                            <button data-index="{{post.id}}" class="dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
+                            <button data-index="{{post.id}}" class="user-like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
+                            <button data-index="{{post.id}}" class="user-dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
 
                         </form>
 
                     {%else%}
 
-                        <form action="{% url 'post-like-dislike' post.id %}" class="inline" method="post">
+                        <form class="inline" method="">
                             {% csrf_token %}
-                            <button data-index="{{post.id}}" class="like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
-                            <button data-index="{{post.id}}" class="dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
+                            <button type="button" id="post{{post.id}}" data-post-id="{{post.id}}" class="like-btn" name="like" value="like" ><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> <span class="post-like-count">{{post.like_count}}</span></span></button>
+                            <button type="button" id="post{{post.id}}" data-post-id="{{post.id}}" class="dislike-btn" name="dislike" value="dislike"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> <span class="post-dislike-count">{{post.dislike_count}}</span></span></button>
 
                         </form>
 
@@ -352,44 +352,50 @@
 
 <script>
 
+    
     document.querySelector('.search-btn').addEventListener('click', function(e){
         console.log('clicked')
         e.preventDefault()
         console.log(document.querySelector('.search-box').value)
+        if(document.querySelector('.search-box').value) {
+            $.ajax({
+                type: 'get',
+                url: "{% url 'search-people' %}",
+                data: {
+                    search_text: document.querySelector('.search-box').value,
+                    action: 'get',
+                },
 
-        $.ajax({
-            type: 'get',
-            url: "{% url 'search-people' %}",
-            data: {
-                search_text: document.querySelector('.search-box').value,
-                action: 'get',
-            },
+                success: function(json) {
+                    //console.log(json)
+                    //console.log(typeof json.data)
+                    //console.log(JSON.parse(json.data))
 
-            success: function(json) {
-                //console.log(json)
-                //console.log(typeof json.data)
-                //console.log(JSON.parse(json.data))
-
-                let container = document.querySelector('.search-result')
-                container.classList.remove('hidden')
-                let elem = ''
-                for ( let eachData of JSON.parse(json.data) ){
-                    console.log(eachData)
-                    elem = `
-                        <a href="connect_space/user/${eachData.pk}/">
-                            <li class="list-none border-b-2"><span>${eachData.fields.first_name} ${eachData.fields.last_name}</span></li> 
-                        </a>
-                    `
+                    let container = document.querySelector('.search-result')
+                    container.classList.remove('hidden')
+                    container.querySelectorAll('a').forEach((eachElem)=>{
+                        eachElem.remove()
+                    })
+                    let elem = ''
+                    for ( let eachData of JSON.parse(json.data) ){
+                        //console.log(eachData)
+                        elem = `
+                            <a href="connect_space/user/${eachData.pk}/">
+                                <li class="list-none border-b-2"><span>${eachData.fields.first_name} ${eachData.fields.last_name}</span></li> 
+                            </a>
+                        `
+                        
+                        container.innerHTML += elem    
+                    }
                     
-                    container.innerHTML += elem    
+                },
+
+                error: function(xhr, errmsg, err) {
+
                 }
-                
-            },
+            })
+        }
 
-            error: function(xhr, errmsg, err) {
-
-            }
-        })
     })
 
     document.querySelector('.search-box').addEventListener('keyup', function(e){
@@ -400,9 +406,84 @@
 
         }
     })
+
+    window.addEventListener('click', function(e){
+        e.stopPropagation();
+        document.querySelector('.search-result').innerHTML = '';
+        if(document.querySelector('.search-result').classList.contains('hidden') == false )
+        {
+            document.querySelector('.search-result').classList.add('hidden')
+        }
+        
+    })
    
 </script>
 
+<script>
 
+    // ajax like 
+
+    document.querySelector('.like-btn').addEventListener('click', function(e){
+        e.preventDefault();
+        console.log('clicked')
+        console.log(this.dataset.index)
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'like' %}",
+            data: {
+                post_id: this.dataset.postId,
+                csrfmiddlewaretoken: '{{csrf_token}}',
+                action: 'post',
+            },
+
+            success: function(json){
+                
+                console.log(json)
+                console.log(json.like_count)
+                document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
+
+                document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
+            },
+
+            error: function(xhr, errmsg, err){
+                console.log(err);
+            }
+        })
+    })
+    
+
+</script>
+
+<script>
+
+    document.querySelector('.dislike-btn').addEventListener('click', function(e){
+        console.log('clicked')
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "dislike" %}',
+            data: {
+                post_id: this.dataset.postId,
+                csrfmiddlewaretoken: '{{csrf_token}}',
+                action: 'post',
+            },
+
+            success: function(json) {
+
+                console.log(json)
+
+                document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
+
+                document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
+            },
+
+            error: function(xhr, errmsg, err) {
+                console.log(err)
+            },
+        })
+
+    })
+
+</script>
 
 {% endblock %}
