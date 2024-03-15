@@ -27,7 +27,7 @@
                 <span class="mr-10 sm:text-xl">Followers (<b>{{data.user_object.following.follower_count}}</b>)</span>
                 <span class="sm:text-xl">Following (<b>{{data.user_object.following.following_count}}</b>)</span>
             </div>
-            <div class="text-center flex gap-5 justify-center">
+            <div class="text-center flex gap-5 justify-center mt-2">
 
                 {% if is_following %}
                     
@@ -46,7 +46,7 @@
                     </button>
                 </form>
                 {% endif %}
-                <a href="{% url 'all-user' %}">
+                <!-- <a href="{% url 'all-user' %}">
 
                     <button
                     type="button"
@@ -54,7 +54,7 @@
                     >
                         More users
                     </button>
-                </a>
+                </a> -->
 
                 
 
