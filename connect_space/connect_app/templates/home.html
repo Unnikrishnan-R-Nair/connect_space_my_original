@@ -18,7 +18,7 @@
         <form method="get" class="search-form  w-8/12  sm:6/12 md:w-6/12 lg:w-4/12 mx-auto">             
                 <input class="search-box w-full p-1 rounded" type="text" placeholder="Search people" name="q" autocomplete="off" autofocus>
                 <button  type="submit" class="hidden search-btn px-4 py-1 rounded border border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">Search</button>   
-                <div class="search-result w-full border-2 bg-slate-400 shadow-lg hidden"></div>
+                <div class="search-result w-full border-x-2 border-slate-400 bg-slate-100 shadow-lg hidden rounded-sm"></div>
         </form>             
     </div>
 </section>
@@ -557,7 +557,7 @@
                         //console.log(eachData)
                         elem = `
                             <a href="connect_space/user/${eachData.pk}/">
-                                <li class="list-none border-b-2"><span>${eachData.fields.first_name} ${eachData.fields.last_name}</span></li> 
+                                <li class="list-none border-b-2 border-slate-400 py-1"><span>${eachData.fields.first_name} ${eachData.fields.last_name}</span></li> 
                             </a>
                         `
                         
