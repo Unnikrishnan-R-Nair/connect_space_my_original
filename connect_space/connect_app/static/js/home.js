@@ -9,8 +9,21 @@ document.querySelector('.post-link').addEventListener('click', function(e){
 // people section height 
 
 document.querySelector('.people-section .view-more-btn').addEventListener('click', function(e){
-    console.log('clicked')
-})
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('clicked');
+    
+    document.querySelector('#all-people').classList.toggle('view-more');
+    this.innerText = 'View less'
+    if ( document.querySelector('#all-people').classList.contains('view-more')) {
+        this.innerText = 'View less'
+    } else {
+        this.innerText = 'View more'
+    }
+
+});
+
+
 
 
 

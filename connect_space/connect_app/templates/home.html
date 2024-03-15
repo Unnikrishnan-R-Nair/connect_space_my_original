@@ -431,7 +431,7 @@
             <div class="rounded p-3">
                 <h2 class="text-lg font-semibold text-center ">People you may know</h2>
                 
-                <div style="height: 150px; overflow: hidden;">
+                <div id="all-people" class="all-people">
                     {% for user in user_profiles %}
                     {% if user.user_object.username != 'admin' and user.user_object != request.user and user.user_object not in user_following %}
                         
@@ -460,8 +460,8 @@
                 {% endfor %}
                 </div>
                
-                <div class="px-2 bg-slate-500">
-                    <a href="{% url 'all-user' %}"><button class="view-more-btn  border rounded bg-indigo-500 hover:bg-indigo-600 text-white py-1">View more</button></a>
+                <div class="px-2 mt-2 text-center">
+                    <a class="mx-auto w-full"><button class="view-more-btn  border rounded bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-1 mx-auto w-full">View more</button></a>
                 </div>
             </div>
         </div>
@@ -521,9 +521,11 @@
 
 {% block script_block %}
 
-<script src="{% static 'js/home.js' %}"></script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
+<script src="{% static 'js/home.js' %}"></script>
 
 <script>  
     document.querySelector('.search-btn').addEventListener('click', function(e){

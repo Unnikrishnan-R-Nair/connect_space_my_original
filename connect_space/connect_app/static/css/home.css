@@ -229,15 +229,21 @@
 }
 
 .people-section {
-    height: 248px;
-    overflow: hidden;
     grid-column: 1 / 3;
     grid-row: 4 / 4;
     position: relative;
 }
 
-.people-section.active {
-    min-height: fit-content;
+
+
+.people-section .all-people {
+    height: 150px;
+    overflow: hidden;
+}
+
+.people-section .all-people.view-more {
+    height: fit-content;
+    overflow: visible;
 }
 
 .people-section span {
@@ -253,9 +259,7 @@
 
 .people-section .view-more-btn {
     cursor: pointer;
-    position: absolute;
-    bottom: 10px;
-    left: 10px; right: 10px;
+    
 }
 
 

@@ -8,6 +8,9 @@
 <section>
     <div class="flex justify-center">
         <div class="w-10/12 sm:w-7/12 xl:w-5/12 border-2 shadow-md my-5 py-5 px-7 bg-white mx-auto">
+            <a href="{% url 'home' %}" class="border-slate-300 border rounded-md px-2 ">
+                <i class="fa-solid fa-arrow-left"></i> Home
+            </a>
             <div class="my-5">
                 <img class="rounded-full mx-auto border-2 border-slate-300" src="{{data.image.url}}" alt="" style="width: 200px; height: 200px; object-fit:cover;">
             </div>
@@ -49,9 +52,7 @@
                     type="button"
                     class="inline-flex items-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-600"
                     >
-                        <i class="fa-solid fa-arrow-left mr-3"></i>
-        
-                        back
+                        More users
                     </button>
                 </a>
 
