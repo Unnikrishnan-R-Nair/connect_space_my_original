@@ -5,6 +5,9 @@
 {% load tz %}
 
 {% block link_block %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 
@@ -71,60 +74,227 @@
                 
             </div>
         </div>
-        
-    
-        <div class="post-story-section">
-            <div class=" flex gap-5 p-2 px-10 bg-white shadow-md border-2 rounded ">
-                <!-- STORY -->
-                <div class="left-slide-btn">
-                    <i class="fa-solid fa-chevron-left fa-2x"></i>
-                </div>
-                <div class="card mt-3 rounded flex-none border-dashed border-2 flex justify-center items-center flex-col gap-3">
-                    <button
-                        type="button"
-                        class="rounded-full bg-white px-3 py-3 text-sm font-semibold text-black shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="h-4 w-4"
-                        >
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                    </button>
-                    <p>Post a story</p>
-                </div>
-                <div class="story-div overflow-x-auto flex gap-5 p-3 px-5">
-                    
-                    <div class="card rounded flex-none border-2">
-    
-                    </div>
-                    <div class="card rounded flex-none border-2">
-    
-                    </div>
-                    <div class="card rounded flex-none border-2">
-    
-                    </div>
-                    <div class="card rounded flex-none border-2">
-                    </div>
-                    <div class="card rounded flex-none border-2">
-                    </div>
-                    
 
+        <!-- story section start -->
+        <div class="story-section bg-white shadow-sm border-px rounded-sm ">
+            <h3 class="text-center text-xl bg-slate-200 font-semibold">Stories</h3>
+            <ul class="">
+                <!-- STORY -->
+                {% if all_user_story %}
+                <li class="card user-story-card border-b-2 p-3 text-lg">
+                    <div class="grid grid-cols-4 justify-center items-center gap-3">
+                        <img class="user-profile-image col-start-2" src="{{request.user.profile.image.url}}" alt="">
+                        <span class="col-start-3">Your stories</span> 
+                    </div>
+                </li>
+                {% else %}
+                <li class="p-3 border-b-2 text-center text-lg">
+                    <a href="{% url 'story-add' %}">
+                        <i class="fa-solid fa-plus"></i> Story
+                    </a>
+                </li>       
+                {% endif %}
+                
+                {% for user in user_profiles %}
+                    {% if user.user_object in story_objects.keys %}
+                    
+                        <li data-user-id="{{user.user_object.id}}" class="card story-card border-b-2 p-3 text-lg">
+                            <div class="grid grid-cols-4 justify-center items-center gap-3">
+                                <img class="profile-image col-start-2" src="{{user.image.url}}" alt="">
+                                <span class="col-start-3 capitalize">
+                                    {% if user.first_name != None and 'None' %}
+                                    {{user.first_name}}
+                                    {% else %}
+                                    {{user.user_object.username}}
+                                    {% endif %}
+                                </span> 
+                            </div>
+                        </li>
+
+                    {% endif %}
+
+                {% endfor%}
+                
+
+            </ul>
+
+            <!-- story active session -->
+
+            <!-- logged user stories -->
+            {% if all_user_story %}
+            <div class="user-story-active-div p-4 hidden">
+                
+                <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow">
+                    <i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i>
+                    <div class="user-detail flex items-center px-2">
+                        <div class="flex items-center gap-2">
+                            <img class="" src="{{request.user.profile.image.url}}" alt="">
+                            <span class="text-md font-semibold text-gray-300 px-2 capitalize">
+                                {% if request.user.profile.first_name != None and request.user.profile.first_name != 'None' %}
+                                {{request.user.profile.first_name}} {{request.user.profile.last_name}}
+                                {% else %}
+                                {{request.user}}
+                                {% endif %}
+                            </span>
+
+                        </div>          
+                    </div>
+                    <div id="default-carousel" class="relative w-full" data-carousel="slide">
+                            <!-- Carousel wrapper -->
+                            <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+                                <!-- Item 1 -->
+                                
+                                {% for story in all_user_story %}
+
+                                <div class="hidden duration-900 ease-in-out" data-carousel-item> 
+                                    <span class="px-2 bg-stone-200 border-2 rounded-full useful-btn text-center">
+                                        <a href="{% url 'story-edit' story.id %}" class="z-50"><button><i class="fa-solid fa-pen text-blue-600"></i> Edit</button></a>
+                                    </span>
+                                    <span class="text-md font-semibold text-slate-700 z-10 absolute top-0 left-2 italic bg-gray-200 px-3">{{story.created_date|date:"d M Y"}}</span>
+                                    {% if story.image %}
+                                    <img src="{{ story.image.url }}" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+                                    {% endif %}
+                                    <p class="absolute bottom-0 left-0 italic px-1"><span class="text-lg p-1 px-4 bg-slate-100">{{story.text}}</span></p>
+                                    
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <!-- Slider indicators -->
+                            <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+                                {% for story in all_user_story %}
+                                <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide {{forloop.counter}}" data-carousel-slide-to="{{forloop.counter}}"></button>
+                                {% endfor %}
+                            </div>
+                            <!-- Slider controls -->
+                            <button type="button" class="absolute top-10 bottom-10 start-0 z-30 flex items-center justify-center h-50 px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                                    <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                                    </svg>
+                                    <span class="sr-only">Previous</span>
+                                </span>
+                            </button>
+                            <button type="button" class="absolute top-10 bottom-10 end-0 z-30 flex items-center justify-center h-50 px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                                    <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                                    </svg>
+                                    <span class="sr-only">Next</span>
+                                </span>
+                            </button>
+                    </div>
                 </div>
-                <div class="right-slide-btn">
-                    <i class="fa-solid fa-chevron-right fa-2x"></i>
+
+                <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow hidden">
+                    <i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i>
+                    <i class="fa-solid fa-chevron-left fa-2x text-slate-400 hover:text-slate-300"></i>
+                    <i class="fa-solid fa-chevron-right fa-2x text-slate-400 hover:text-slate-300"></i>
+                    <div class="user-detail flex items-center px-2">
+                        <div class="flex items-center gap-2">
+                            <img class="" src="{{request.user.profile.image.url}}" alt="">
+                            <span class="text-md font-semibold text-gray-300 px-2">{{request.user.profile.first_name}} {{request.user.profile.last_name}}</span>
+
+                        </div>          
+                    </div>
+                    
+                    {% if all_user_story %}
+                    <div class="story-detail-outter flex overflow-x-auto flex gap-5 p-3 px-5 snap-x ">
+                        {% for story in all_user_story %}
+                            <div class="story-details px-4 flex-none snap-center ">
+                                <span class="text-md font-semibold text-slate-300">{{story.created_date|date:"d M Y"}}</span>
+                                {% if story.image %}
+                                <img class="rounded-md mx-auto" src="{{story.image.url}}" alt="">
+                                {% endif %}
+                                <p class="text-center  mt-2"><span class="text-lg p-1 px-4 bg-slate-100 ">{{story.text}}</span></p>
+                                <span class="px-4 bg-stone-200 border-2 rounded-md useful-btn">
+                                    <a href="{% url 'story-delete' story.id %}"><i class="fa-solid fa-trash text-red-600 me-4"></i></a>
+                                    <a href=""><i class="fa-solid fa-pen text-blue-600"></i></a>
+                                </span>
+                                
+                            </div>
+                            
+                        {% endfor %}
+                        
+                    </div>
+    
+                    {% endif %}
+
                 </div>
             </div>
+            {% endif %}
+            <!-- logged user stories end-->
+            <!-- other user stories -->
+            {% for user in user_profiles %}
+                {% if user.user_object in story_objects.keys %}
+                <div id="user{{user.user_object.id}}" class="story-active-div p-4 hidden">
+                    
+                    <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow">
+                        <i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i>
+                        <div class="user-detail flex items-center px-2">
+                            <div class="flex items-center gap-2">
+                                <img class="" src="{{user.image.url}}" alt="">
+                                <span class="text-md font-semibold text-gray-300 px-2 capitalize">
+                                    {% if user.profile.first_name != None and user.profile.first_name != 'None' %}
+                                    {{user.profile.first_name}} {{user.profile.last_name}}
+                                    {% else %}
+                                    {{user.user_object.username}}
+                                    {% endif %}
+                                </span>
 
+                            </div>          
+                        </div>
+                        <div id="default-carousel" class="relative w-full" data-carousel="slide">
+                                <!-- Carousel wrapper -->
+                                <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+                                    <!-- Item 1 -->
+                                    {% for story in user.user_object.story.all %}
+
+                                    <div class="hidden duration-900 ease-in-out" data-carousel-item> 
+                                        <span class="text-md font-semibold text-slate-700 z-10 absolute top-0 left-2 italic bg-gray-200 px-3">{{story.created_date|date:"d M Y"}}</span>
+                                        {% if story.image %}
+                                        <img src="{{ story.image.url }}" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+                                        {% endif %}
+                                        <p class="absolute bottom-0 left-0 italic px-1"><span class="text-lg p-1 px-4 bg-slate-100 ">{{story.text}}</span></p>
+                                        
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <!-- Slider indicators -->
+                                <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+                                    {% for story in user.user_object.story.all %}
+                                    <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide {{forloop.counter}}" data-carousel-slide-to="{{forloop.counter}}"></button>
+                                    {% endfor %}
+                                </div>
+                                <!-- Slider controls -->
+                                <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+                                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                                        <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                                        </svg>
+                                        <span class="sr-only">Previous</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+                                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                                        <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                                        </svg>
+                                        <span class="sr-only">Next</span>
+                                    </span>
+                                </button>
+                        </div>
+                    </div>
+
+                    
+                </div>
+                {% endif %}
+            {% endfor %}
+            <!-- other user stories end -->
+            <!-- story active session end -->
+        </div>
+
+        
+        <div class="post-story-section">
             <!-- POST -->
             {% for post in all_post %}
             <div class="border rounded p-6 my-5 shadow-md bg-white post-div">
@@ -181,24 +351,25 @@
                         <div class="text-end mb-2">
                             <a href="{% url 'comment-add' post.id %}"><button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1 rounded text-white shadow-sm"><i class="fa-solid fa-plus mr-3px"></i> Comment</button></a>
                         </div>
-                        <!-- <img src="" alt="">
-                        <form action="{% url 'comment-add' post.id %}" method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
 
-                            {{comment_form}}
+                        <!-- ajax form implementation -->
+                        <!-- <form action="" class="commentform" data-post-id="{{post.id}}" id="commentform{{post.id}}"  method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+   
                             <div class="flex">
-                                <textarea name="comment_text" type="text" name="" id="" class="w-11/12 border-2 px-2 rounded"></textarea>
-                                <button type="submit" class="border p-3 px-4 ml-4 rounded bg-blue-500 text-zinc-100 text-sm"><i class="fa-solid fa-paper-plane"></i></button>
-                            </div>-->
-                            <!-- drop down to select image, gif -->
-                            <!-- <div class="my-4">
+                                <textarea name="comment_text" type="text" class="w-11/12 border-2 px-2 rounded"></textarea>
+                                <i class="fa-solid fa-paperclip"></i>
+                                <button type="submit" class="comment-submit border p-3 px-4 ml-4 rounded bg-blue-500 text-zinc-100 text-sm"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                            <div class="my-4">
                                 <span class="me-5 border-2 px-3 py-1 text-cyan-600">
                                     <i class="fa-regular fa-image"></i> Photo
-                                    <input name="comment_image" type="file" accept="image/*">
+                                    <input class="comment_image" name="comment_image" type="file" accept="image/*">
                                 </span>
-                                <span class="px-3 py-1 border-2 text-fuchsia-900"><i class="fa-solid fa-video"></i> Video</span>
+                                
                             </div>
                         </form>  -->
+
                     </div>
 
                     {% if post.comment_count > 0 %}
@@ -262,9 +433,9 @@
                 
                 <div style="height: 150px; overflow: hidden;">
                     {% for user in user_profiles %}
-                    {% if user.user_object.username != 'admin' and user.user_object != request.user %}
+                    {% if user.user_object.username != 'admin' and user.user_object != request.user and user.user_object not in user_following %}
                         
-                            {% csrf_token %}
+                            
                             <div class="my-3 grid grid-cols-3 gap-4 justify-items-center items-center border-2 border-slate-100 rounded-md">
                                 
                                 <img class="all-user-profile-img border-2" src="{{user.image.url}}" alt="">
@@ -288,9 +459,9 @@
                     {% endif %}
                 {% endfor %}
                 </div>
-                
+               
                 <div class="px-2 bg-slate-500">
-                    <a href=""><button class="view-more-btn  border rounded bg-indigo-500 hover:bg-indigo-600 text-white py-1">View more</button></a>
+                    <a href="{% url 'all-user' %}"><button class="view-more-btn  border rounded bg-indigo-500 hover:bg-indigo-600 text-white py-1">View more</button></a>
                 </div>
             </div>
         </div>
@@ -340,6 +511,8 @@
             </div>
         </div>
     </div>
+
+
     
 </section>
 
@@ -350,12 +523,13 @@
 
 <script src="{% static 'js/home.js' %}"></script>
 
-<script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 
-    
+<script>  
     document.querySelector('.search-btn').addEventListener('click', function(e){
-        console.log('clicked')
-        e.preventDefault()
+        //console.log('clicked')
+        e.stopPropagation();
+        e.preventDefault();
         console.log(document.querySelector('.search-box').value)
         if(document.querySelector('.search-box').value) {
             $.ajax({
@@ -399,6 +573,8 @@
     })
 
     document.querySelector('.search-box').addEventListener('keyup', function(e){
+
+        e.stopPropagation();
         if(this.value == '') {
     
             document.querySelector('.search-result').innerHTML = '';
@@ -423,66 +599,89 @@
 
     // ajax like 
 
-    document.querySelector('.like-btn').addEventListener('click', function(e){
-        e.preventDefault();
-        console.log('clicked')
-        console.log(this.dataset.index)
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'like' %}",
-            data: {
-                post_id: this.dataset.postId,
-                csrfmiddlewaretoken: '{{csrf_token}}',
-                action: 'post',
-            },
+    document.querySelectorAll('.like-btn').forEach(function(eachLikeBtn){
 
-            success: function(json){
-                
-                console.log(json)
-                console.log(json.like_count)
-                document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
-
-                document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
-            },
-
-            error: function(xhr, errmsg, err){
-                console.log(err);
-            }
+        eachLikeBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            //console.log('clicked')
+            
+    
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'like' %}",
+                data: {
+                    post_id: this.dataset.postId,
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    action: 'post',
+                },
+    
+                success: function(json){
+                    
+                    //console.log(json)
+                    //console.log(json.like_count)
+                    document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
+    
+                    document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
+                },
+    
+                error: function(xhr, errmsg, err){
+                    console.log(err);
+                }
+            })
         })
+        
+
+
     })
+    
     
 
 </script>
 
 <script>
 
-    document.querySelector('.dislike-btn').addEventListener('click', function(e){
-        console.log('clicked')
+    document.querySelectorAll('.dislike-btn').forEach(function(eachDislikeBtn){
 
-        $.ajax({
-            type: 'POST',
-            url: '{% url "dislike" %}',
-            data: {
-                post_id: this.dataset.postId,
-                csrfmiddlewaretoken: '{{csrf_token}}',
-                action: 'post',
-            },
-
-            success: function(json) {
-
-                console.log(json)
-
-                document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
-
-                document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
-            },
-
-            error: function(xhr, errmsg, err) {
-                console.log(err)
-            },
+        eachDislikeBtn.addEventListener('click', function(e){
+            //console.log('clicked')
+            e.preventDefault();
+            e.stopPropagation();
+    
+            $.ajax({
+                type: 'POST',
+                url: '{% url "dislike" %}',
+                data: {
+                    post_id: this.dataset.postId,
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    action: 'post',
+                },
+    
+                success: function(json) {
+    
+                    //console.log(json)
+    
+                    document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
+    
+                    document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
+                },
+    
+                error: function(xhr, errmsg, err) {
+                    console.log(err)
+                },
+            })
+    
         })
 
-    })
+    })    
+
+    
+</script>
+
+
+<script>
+
+// ajax comment
 
 </script>
 

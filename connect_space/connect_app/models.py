@@ -145,7 +145,7 @@ class Follow(models.Model):
 
         following = self.follows.count()
 
-        print(following)
+        # print(following)
 
         return following
     
@@ -157,7 +157,7 @@ class Follow(models.Model):
 
         all_followers = Follow.objects.all().filter(follows=self.follower).count()
 
-        print(all_followers)
+        # print(all_followers)
 
         return all_followers
     
@@ -165,21 +165,22 @@ class Follow(models.Model):
     
 
 
-# class Story(models.Model):
+class Story(models.Model):
 
-#     user_object = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_object = models.ForeignKey(User, on_delete=models.CASCADE, related_name='story')
 
-#     image = models.ImageField(upload_to='images/story_image', null=True, blank=True)
+    image = models.ImageField(upload_to='images/story_image', null=True, blank=True)
 
-#     video = models.FileField(upload_to='images/story_video/', null=True, blank=True)
+    # video = models.FileField(upload_to='images/story_video/', null=True, blank=True)
 
-#     text = models.CharField(max_length=300, null=True, blank=True)
+    text = models.CharField(max_length=300, null=True, blank=True)
 
-#     created_date = models.DateTimeField(auto_now_add=True)
+    created_date = models.DateTimeField(auto_now_add=True)
 
-#     updated_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
 
-#     is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    
     
 
 

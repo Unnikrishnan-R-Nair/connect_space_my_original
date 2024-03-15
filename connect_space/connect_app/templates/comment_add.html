@@ -6,9 +6,12 @@
 
 {% block link_block %}
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+
 <link rel="stylesheet" href="{% static 'css/comment_add.css' %}">
 
 {% endblock %}
+
 
 {% block main_content %}
 
@@ -19,7 +22,7 @@
             <div class="border rounded p-6 my-5 shadow-md bg-white post-div">
                 <div class="flex items-center gap-4">
                     <img class="post-owner-image" src="{{post.post_by.profile.image.url}}" alt="">
-                    <span class="text-slate-600">{{post.post_by.profile.first_name}} ,</span>
+                    <span class="text-slate-600 capitalize">{% if post.post_by.profile.first_name != None and post.post_by.profile.first_name != 'None'  %}{{post.post_by.profile.first_name}}{% else %}{{post.post_by}}{% endif %} ,</span>
                     <span class="text-slate-500">{{post.created_date|date:"d M Y"}}</span>
                 </div>
                 <div class="mt-4 px-3">
@@ -66,27 +69,7 @@
                 </div>
                 <div>
                     <!-- Comment for post -->
-                    <div>
-                        
-                        <!-- <img src="" alt="">
-                        <form action="{% url 'comment-add' post.id %}" method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-
-                            {{comment_form}}
-                            <div class="flex">
-                                <textarea name="comment_text" type="text" name="" id="" class="w-11/12 border-2 px-2 rounded"></textarea>
-                                <button type="submit" class="border p-3 px-4 ml-4 rounded bg-blue-500 text-zinc-100 text-sm"><i class="fa-solid fa-paper-plane"></i></button>
-                            </div>-->
-                            <!-- drop down to select image, gif -->
-                            <!-- <div class="my-4">
-                                <span class="me-5 border-2 px-3 py-1 text-cyan-600">
-                                    <i class="fa-regular fa-image"></i> Photo
-                                    <input name="comment_image" type="file" accept="image/*">
-                                </span>
-                                <span class="px-3 py-1 border-2 text-fuchsia-900"><i class="fa-solid fa-video"></i> Video</span>
-                            </div>
-                        </form>  -->
-                    </div>
+                    
 
                     {% if post.comment_count > 0 %}
                     <div class="comment-section p-2 rounded bg-slate-50">
@@ -161,5 +144,37 @@
 
         {{comment_form}}
     </form> -->
+
+{% endblock %}
+
+
+
+{% block script_block %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
+<script>
+
+    document.querySelector('label[for="id_comment_text"]').innerText = 'Comment';
+
+    document.querySelectorAll('label').forEach((lable)=>{
+        lable.classList.add(
+            'block', 'mb-2', 'text-sm', 'font-medium', 'text-gray-900',
+        )
+    })
+
+    document.querySelector('input[type="file"]').classList.add(
+
+    'block', 'w-full', 'text-sm', 'text-gray-900', 'border', 'border-gray-300', 'rounded-lg', 'cursor-pointer', 'bg-gray-50', 'focus:outline-none',
+
+    )
+
+    document.querySelector('input[type="file" i]').classList.add('bg-slate-400')
+
+    document.querySelector('textarea').setAttribute('rows', '2')
+
+    
+
+</script>
 
 {% endblock %}

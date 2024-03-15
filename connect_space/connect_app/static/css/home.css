@@ -11,7 +11,7 @@
 .user-section {
     position: relative;
     grid-column: 1 / 3;
-    
+    grid-row: 1 / 3;
 }
 
 .user-section .cover-photo {
@@ -44,34 +44,159 @@
     position: relative;
 }
 
-.post-story-section .story-div {
-    
-    scrollbar-width: thin;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: gray;
+.post-story-section .post-div:nth-of-type(1) {
+    margin-top: 0;
 }
 
-.post-story-section .left-slide-btn { 
-    position: absolute;
-    top: 100px; 
-    left: 200px;
-    cursor: pointer;
-    color: gray;
-}
-.post-story-section .right-slide-btn {
-    position: absolute;
-    top: 100px; 
-    right: 23px;
-    cursor: pointer;
-    color: gray;
-}
-.card {
-    width: 150px;
-    height: 200px;
+/* story */
+
+.story-section {
+    grid-column: 1 / 3;
+    grid-row: 3 / 4;
+    position: relative;
     
-    background-color: rgba(128, 128, 128, 0.693);
 }
+
+
+
+.card.user-story-card img.user-profile-image {
+
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgb(197, 195, 195);
+    
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.card.story-card img.profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgb(197, 195, 195);
+    
+    cursor: pointer;
+    object-fit: cover;
+}
+
+
+.user-story-active-div.active {
+    z-index: 5;
+    position: fixed;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+    transition: all 1s ease;
+    backdrop-filter: blur(5px);
+    background-color: rgba(128, 128, 128, 0.371);
+    min-width: 320px;
+}
+
+.user-story-active-div .story-div {
+    position: relative;
+    min-width: 270px;
+    margin-top: 50px;
+    overflow: hidden;
+    border-radius: 5px;
+    
+}
+
+
+.user-story-active-div .story-div i.fa-solid.fa-circle-xmark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.user-story-active-div .user-detail {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.user-story-active-div .user-detail div img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+
+
+
+.user-story-active-div .story-div .story-details {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding-bottom: 30px;
+}
+.user-story-active-div .story-div .story-detail-outter {
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-width: thin;
+    
+    
+}
+
+
+.user-story-active-div .story-div .story-detail-outter .story-details img {
+    height: 300px;
+}
+
+
+.useful-btn {
+    position: absolute;
+    top: 0;
+    right: 1px;
+    
+    z-index: 1000!important;
+}
+
+.story-active-div.active {
+    z-index: 5;
+    position: fixed;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+    transition: all 1s ease;
+    backdrop-filter: blur(5px);
+    background-color: rgba(128, 128, 128, 0.371);
+    min-width: 320px;
+}
+
+
+.story-active-div .story-div {
+    position: relative;
+    min-width: 270px;
+    margin-top: 50px;
+    overflow: hidden;
+    border-radius: 5px;
+    
+}
+
+.story-active-div .story-div i.fa-solid.fa-circle-xmark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.story-active-div .user-detail {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.story-active-div .user-detail div img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+
 
 .post-link {
     cursor: pointer;
@@ -107,7 +232,7 @@
     height: 248px;
     overflow: hidden;
     grid-column: 1 / 3;
-    grid-row: 2 / 3;
+    grid-row: 4 / 4;
     position: relative;
 }
 
@@ -148,7 +273,7 @@
 
 .other-usefull-links {
     grid-column: 1 / 3;
-    grid-row: 3 / 4;
+    grid-row: 5 / 5;
 }
 
 .other-usefull-links li img {
@@ -166,7 +291,7 @@
     }
     .people-section {
         grid-column: 1 / 3;
-        grid-row: 2 / 3
+        grid-row: 4 / 4
     }
     .post-story-section{
         grid-column: 3 / 7;
@@ -183,12 +308,21 @@
     }
     .people-section {
         grid-column: 1 / 7;
-        grid-row: 2 / 3;
+        grid-row: 3 / 4;
         
     }
+
+    .story-section {
+        grid-column: 1 / 7;
+        grid-row: 2 / 3;
+        position: relative;
+        
+    }
+    
+
     .post-story-section{
         grid-column: 1 / 7;
-        grid-row: 3 / 7;
+        grid-row: 4 / 7;
         
     }
 
@@ -215,6 +349,14 @@
         display: grid;
         grid-template-columns: 1fr;
     }
+
+    .user-story-active-div .story-div {
+        margin-top: 60px;
+    }
+
+    .story-active-div .story-div {
+        margin-top: 60px;
+    }
 }
 
 
@@ -223,7 +365,17 @@
         width: 30px;
         height: 30px;
     }
-   
+    .user-story-active-div .story-div .story-detail-outter .story-details img {
+        height: 200px;
+    }
+
+    .user-story-active-div .story-div {
+        margin-top: 100px;
+    }
+
+    .story-active-div .story-div {
+        margin-top: 100px;
+    }
 }
 
 @media (max-width:375px) {
@@ -242,4 +394,5 @@
         display: inline-block;
         margin-top: 10px;
     }
+   
 }

@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 
 from django.views.generic import View
 
-from connect_app.forms import RegistrationForm, LoginForm, UserProfileForm, PostAddForm, CommentForm, FollowForm
+from connect_app.forms import RegistrationForm, LoginForm, UserProfileForm, PostAddForm, CommentForm, FollowForm, StoryForm
 
 from django.contrib.auth import authenticate, login, logout
 
-from connect_app.models import UserProfile, Post, Comment, Follow
+from connect_app.models import UserProfile, Post, Comment, Follow, Story
 
 from connect_app.decorators import signin_required
 
@@ -27,6 +27,10 @@ from django.contrib.auth.models import User
 import json
 
 from django.core import serializers
+
+from datetime import datetime, timedelta, timezone
+
+from django.utils import timezone
 
 # Create your views here.
 
@@ -64,6 +68,18 @@ class HomeView(View):
         # Story
         # comment
 
+        # user followers
+
+        user_followers = Follow.objects.filter(follows=request.user)
+
+        print(user_followers)
+
+        # user following
+        user_following = Follow.objects.get(follower=request.user).follows.all()
+
+        print(user_following)
+
+
         all_user_profiles = UserProfile.objects.all()
        
         profile_obj = UserProfile.objects.get(user_object=request.user)
@@ -84,26 +100,73 @@ class HomeView(View):
 
         # comment_form = CommentForm(instance=comment_obj1)
 
+        # story 
 
-        # search 
-        
-        # search_text = request.GET.get('q') or ''
-        # user_profile_objects = None
-        # if search_text:
+        logged_in_user_story = Story.objects.filter(user_object=request.user)
 
-        #     user_profile_objects = UserProfile.objects.filter(first_name__icontains=search_text)
+        for story in logged_in_user_story:
 
-        return render(request, 'home.html',{
+            print('updated',story.updated_date)
+
+            story_updated_date = story.updated_date
+
+            story_expiry_date = story_updated_date + timezone.timedelta(days=1)
+
+            print('exp:', story_expiry_date)
+
+            # now = datetime.today() # time naive object
+            # print('today', now)
+
+            # print('tommorrow', (now + timedelta(days=1)))
+
+            # print(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+
+            print('exp_date', (story_updated_date + timedelta(days=1)))
+
+            print(timezone.now() + timezone.timedelta(days=2))
+
+            if story_expiry_date <= timezone.now() :
+
+                story.delete()  # logged user story delete
+
+
+        admin_obj = User.objects.get(username='admin')
+
+        user_profiles = UserProfile.objects.all().exclude(user_object=request.user).exclude(user_object=admin_obj)
+
+        users_with_story = {}
+
+        for user in user_profiles:
+
+            story_objects = user.user_object.story.filter(user_object=user.user_object)
+
+            if story_objects and request.user.following.follows.contains(user.user_object):
+
+                
+                users_with_story.update({user.user_object : story_objects})
+
+        # print(users_with_story)
+
+
+        return render(request, 'home.html', {
 
                                             'profile_obj': profile_obj,
+
                                             'all_post': all_post_obj,
+
                                             'post_count':logged_in_user_post_count,
+
                                             'user_profiles': all_user_profiles, 
-                                            # 'comment_form': comment_form,
+
+                                            'user_following': user_following,
+                                            
                                             'all_comments': all_comment_obj,
 
-                                            # 'search_results': user_profile_objects,
-                                            # 'search_text': search_text,
+                                            'all_user_story': logged_in_user_story,
+
+                                            'story_objects': users_with_story,
+
+                                            'user_profiles': user_profiles,
                                             
                                             })
     
@@ -151,6 +214,10 @@ class CommentView(View):
             return redirect('home')
 
         return render(request, 'comment_add.html', {'comment_form': form, 'post': post_obj, 'all_comments': all_comments})
+
+
+
+    
 
 
 class SignInView(View):
@@ -348,13 +415,13 @@ class AllUserView(View):
 
         login_following_users = Follow.objects.get(follower=request.user).follows.all()
 
-        print(login_following_users)
+        # print(login_following_users)
 
         login_user_followers = Follow.objects.filter(follows=request.user)
 
-        print(login_user_followers)
+        # print(login_user_followers)
 
-        return render(request, 'all_user.html', {'all_users': all_users})
+        return render(request, 'all_user.html', {'all_users': all_users, 'user_following': login_following_users})
 
 
 
@@ -376,7 +443,7 @@ class FollowingUsersView(View):
             login_following_users = Follow.objects.get(follower=request.user).follows.all()
 
 
-        print(login_following_users)
+        # print(login_following_users)
 
         return render(request, 'following_users.html', {'all_following': login_following_users})
     
@@ -392,7 +459,7 @@ class FollowedUsersView(View):
             # login_user_followers = Follow.objects.all().filter(follows=request.user)
 
             login_user_followers = request.user.followers.all()
-            print(login_user_followers)
+            # print(login_user_followers)
 
         except:
             
@@ -486,7 +553,7 @@ class PostLikeDislikeView(View):
 
         post_obj = Post.objects.get(id=id)
 
-        print(request.POST.get('like-dislike'))
+        # print(request.POST.get('like-dislike'))
 
         if post_obj.post_by == request.user and request.POST.get('like-dislike') == 'like':
 
@@ -667,7 +734,7 @@ class SearchPeopleView(View):
         if request.GET.get('action') == 'get':
 
             search_text = request.GET.get('search_text')
-            print(search_text)
+            
 
         all_u = UserProfile.objects.filter(first_name__contains=search_text).exclude(first_name=request.user.profile.first_name) or UserProfile.objects.filter(last_name__startswith=search_text).exclude(last_name=request.user.profile.last_name)
 
@@ -681,4 +748,73 @@ class SearchPeopleView(View):
         response = JsonResponse({'success': 'success', 'data':data})
 
         return response
+
+
+
+
+class StoryView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        story_object = Story(user_object=request.user)
+
+        form = StoryForm(instance=story_object)
+
+        return render(request, 'story.html', {'form': form})
+    
+    def post(sefl, request, *args, **kwargs):
+
+        story_object = Story(user_object=request.user)
+
+        form = StoryForm(request.POST, files=request.FILES, instance=story_object)
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect('home')
+
+        return render(request, 'story.html', {'form': form})
+    
+
+class StoryEditView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        id = kwargs.get('pk')
+
+        story_obj = Story.objects.get(id=id)
+
+        form = StoryForm(instance=story_obj)
+
+        return render(request, 'story_edit.html', {'form': form, 'story': story_obj})
+    
+    def post(self, request, *args, **kwargs):
+
+        id = kwargs.get('pk')
+
+        story_obj = Story.objects.get(id=id)
+
+        form = StoryForm(request.POST, files=request.FILES, instance=story_obj)
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect('home')
+        
+        return render(request, 'story_edit.html', {'form': form})
+
+
+
+class StoryDeleteView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        id = kwargs.get('pk')
+
+        Story.objects.get(id=id).delete()
+
+        return redirect('home')
+
 

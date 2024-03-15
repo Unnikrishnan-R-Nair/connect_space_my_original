@@ -12,18 +12,7 @@ document.querySelector('.people-section .view-more-btn').addEventListener('click
     console.log('clicked')
 })
 
-// story section scroll
 
-document.querySelector('.left-slide-btn').addEventListener('click', function(e){
-    console.log('clicked')
-
-    document.querySelector('.story-div').scrollBy({top:0, left:-100, behavior:"smooth"})
-})
-
-document.querySelector('.right-slide-btn').addEventListener('click', function(e){
-    console.log('clicked')
-    document.querySelector('.story-div').scrollBy({top:0, left:100, behavior:"smooth"})
-})
 
 // following button
 
@@ -34,43 +23,74 @@ document.querySelectorAll('.follow-btn').forEach((eachBtn)=>{
 })
 
 
-// search
+// story section
+if (document.querySelector('.card.user-story-card')){
+    document.querySelector('.card.user-story-card').addEventListener('click', function(e){
+        e.stopPropagation();
+        document.querySelector('.user-story-active-div').classList.add('active')
+        document.querySelector('.user-story-active-div').classList.remove('hidden')
+        
+    })
+}
+if(document.querySelector('.user-story-active-div .story-div i.fa-solid.fa-circle-xmark')) {
+    document.querySelector('.user-story-active-div .story-div i.fa-solid.fa-circle-xmark').addEventListener('click', function(e){
+        e.stopPropagation();
+        document.querySelector('.user-story-active-div').classList.replace('active', 'hidden');
+        
+})
+}
+
+if(document.querySelector('.story-active-div .story-div i.fa-solid.fa-circle-xmark')) {
+    document.querySelectorAll('.story-active-div .story-div i.fa-solid.fa-circle-xmark').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+            e.stopPropagation();
+            elemId=document.querySelector('.story-active-div.active').getAttribute('id')
+            //console.log(elemId)
+            document.querySelector(`#${elemId}`).classList.replace('active', 'hidden')
+ 
+        })
+    })
+}
 
 
-
-
-
-// function getCookie(name) {
-//     let cookieValue = null;
-//     if (document.cookie && document.cookie !== '') {
-//         const cookies = document.cookie.split(';');
-//         for (let i = 0; i < cookies.length; i++) {
-//             const cookie = cookies[i].trim();
-//             // Does this cookie string begin with the name we want?
-//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                 break;
-//             }
-//         }
-//     }
-//     return cookieValue;
-// }
-// const csrftoken = getCookie('csrftoken');
-
-
-
-// Json Response
-
-// document.querySelector('.like-btn').forEach((eachBtn)=>{
-//     eachBtn.addEventListener('click', function(e){
-//         location.reload();
-
-//         $.ajax({
-//             type:'POST',
-//             url: '{% url "like-dislike-post" %}',
-//             data: {
-//                 post_id: data['index'].text,
-//             }
-//         })
-//     })
+// document.querySelector('.user-story-active-div .story-div i.fa-solid.fa-chevron-left').addEventListener('click', function(e){
+//     e.stopPropagation();
+//     //document.querySelector('.user-story-active-div .story-div .story-detail-outter').scrollBy({top:0, left:-300, behavior:"smooth"})
+    
+//     //console.log(window.getComputedStyle(document.querySelector('.user-story-active-div .story-div .story-detail-outter .story-details')).width)
+    
+//     scrollWidth = (window.getComputedStyle(document.querySelector('.user-story-active-div .story-div .story-detail-outter .story-details')).width)
+    
+//     parsedWidth = parseInt(scrollWidth.replace('px', ''))
+//     //console.log(typeof scrollWidth)
+//     //console.log(parseInt(scrollWidth.replace('px', '')))
+//     document.querySelector('.user-story-active-div .story-div .story-detail-outter').scrollBy({top:0, left:-`${parsedWidth}`, behavior:"smooth"})
 // })
+
+// document.querySelector('.user-story-active-div .story-div i.fa-solid.fa-chevron-right').addEventListener('click', function(e){
+//     e.stopPropagation();
+//     scrollWidth = (window.getComputedStyle(document.querySelector('.user-story-active-div .story-div .story-detail-outter .story-details')).width)
+//     parsedWidth = parseInt(scrollWidth.replace('px', ''))
+//     document.querySelector('.user-story-active-div .story-div .story-detail-outter').scrollBy({top:0, left:`${parsedWidth}`, behavior:"smooth"})
+// })
+
+if(document.querySelector('.post-story-btn')) {
+    document.querySelector('.post-story-btn').addEventListener('click', function(e){
+        e.stopPropagation()
+    })
+}
+
+if(document.querySelector('.card.story-card')) {
+    document.querySelectorAll('.card.story-card').forEach(function(item){
+        item.addEventListener('click', function(e){
+            e.stopPropagation();
+
+            console.log(item.dataset.userId)
+
+            document.querySelector(`#user${item.dataset.userId}`).classList.add('active')
+            document.querySelector(`#user${item.dataset.userId}`).classList.remove('hidden')
+            
+        })
+    })
+    
+}

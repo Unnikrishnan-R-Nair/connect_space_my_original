@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+
+{% load static %} 
+
+{% load crispy_forms_tags %}
+
+{% block link_block %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+
+{% endblock %}
+
+{% block main_content %}
+
+<section>
+    <div class="flex justify-center">
+        <div class="w-full md:w-7/12 xl:w-6/12 my-2 p-3 shadow border-2 rounded bg-white">
+            <h3 class="text-center text-3xl font-semibold text-gray-600 my-5 mb-7"><span class="bg-slate-300 px-7 py-1 rounded">Story</span></h3>
+            <p class="text-slate-600">Story date : {{story.updated_date}}</p>
+            <img src="{{story.image.url}}" alt="">
+            <p class="text-xl text-slate-600 text-center">{{story.text}}</p>
+
+        </div>
+    </div>
+
+
+    <div class="flex justify-center">
+        <div class="w-full md:w-7/12 xl:w-6/12 my-5 mb-16 p-3 shadow border-2 rounded bg-white">
+                      
+            <form method='post' enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="id_image">Change Image</label>
+                <input type="file" name="image" id="id_image">
+                {{form.text|as_crispy_field}}
+
+                <div class="text-center mt-5">
+                    <button type="submit" class="px-4 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded me-4">Edit Story</button>
+                    
+                    <a href="{% url 'story-delete' story.id %}">
+                        <button type="submit" class="px-4 py-1 bg-red-600 hover:bg-red-700 text-white text-lg rounded">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </a>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</section>
+    
+
+
+{% endblock %}
+
+
+
+{% block script_block %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
+<script>
+
+    
+
+    document.querySelectorAll('label').forEach((lable)=>{
+        lable.classList.add(
+            'block', 'mb-2', 'text-sm', 'font-medium', 'text-gray-900',
+        )
+    })
+
+    document.querySelector('input[type="file"]').classList.add(
+
+    'block', 'w-full', 'text-sm', 'text-gray-900', 'border', 'border-gray-300', 'rounded-lg', 'cursor-pointer', 'bg-gray-50', 'focus:outline-none', 'mb-3'
+
+    )
+
+    document.querySelector('input[type="file" i]').classList.add('bg-slate-400')
+
+    document.querySelector('input[type="text"]').setAttribute('aria-multiline', 'on')
+
+    
+
+</script>
+
+{% endblock %}

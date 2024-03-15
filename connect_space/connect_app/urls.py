@@ -39,6 +39,13 @@ urlpatterns = [
 
     path('connect_space/users/posts/all/', views.MyPostsView.as_view(), name='my-posts'),
 
+    # story view
+    path('connect_space/story/add/', views.StoryView.as_view(), name='story-add'),
+
+    path('connect_space/story/<int:pk>/remove/', views.StoryDeleteView.as_view(), name='story-delete'),
+
+    path('connect_space/story/<int:pk>/change/', views.StoryEditView.as_view(), name='story-edit'),
+
     # search user
     path('search/', views.SearchPeopleView.as_view(), name='search-people'),
 
@@ -57,5 +64,6 @@ urlpatterns = [
     # ajax dislike
 
     path('dislike/', views.PostDislikeView.as_view(), name='dislike'),
+   
 
 ]

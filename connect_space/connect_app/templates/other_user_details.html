@@ -3,22 +3,24 @@
 
 {% block main_content %}
 
+
+
 <section>
     <div class="flex justify-center">
-        <div class="sm:w-7/12 border-2 shadow-md my-5 py-5 px-7">
+        <div class="w-10/12 sm:w-7/12 xl:w-5/12 border-2 shadow-md my-5 py-5 px-7 bg-white mx-auto">
             <div class="my-5">
-                <img class="rounded " src="{{data.image.url}}" alt="" style="width: 200px;">
+                <img class="rounded-full mx-auto border-2 border-slate-300" src="{{data.image.url}}" alt="" style="width: 200px; height: 200px; object-fit:cover;">
             </div>
             
             {% if data.first_name != None %}
-            <p class="capitalize my-5 text-2xl">{{data.first_name}} {{data.last_name}}</p>
+            <p class="capitalize my-5 text-2xl text-center">{{data.first_name}} {{data.last_name}}</p>
             {% else %}
-            <p class="capitalize my-5 text-2xl">{{data.user_object.username}}</p>
+            <p class="capitalize my-5 text-2xl  text-center">{{data.user_object.username}}</p>
             {% endif %}
             {% if data.bio != None %}
-            <p class="my-5 text-lg">{{data.bio}}</p>
+            <p class="my-5 text-lg  text-center">{{data.bio}}</p>
             {% endif %}
-            <div class="my-5">
+            <div class="my-5  text-center">
                 <span class="mr-10 sm:text-xl">Followers (<b>{{data.user_object.following.follower_count}}</b>)</span>
                 <span class="sm:text-xl">Following (<b>{{data.user_object.following.following_count}}</b>)</span>
             </div>
@@ -41,7 +43,7 @@
                     </button>
                 </form>
                 {% endif %}
-                <a href="{% url 'home' %}">
+                <a href="{% url 'all-user' %}">
 
                     <button
                     type="button"
@@ -49,7 +51,7 @@
                     >
                         <i class="fa-solid fa-arrow-left mr-3"></i>
         
-                        Home
+                        back
                     </button>
                 </a>
 

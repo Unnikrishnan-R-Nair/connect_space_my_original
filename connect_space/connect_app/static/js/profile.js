@@ -37,3 +37,4 @@ document.querySelector('input[type="file"]').addEventListener('change', function
     
     document.querySelector('button[type="submit"]').click();
 })
+

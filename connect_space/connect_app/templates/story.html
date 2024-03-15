@@ -1,6 +1,7 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% load static %}
+
+{% load static %} 
 
 {% load crispy_forms_tags %}
 
@@ -11,27 +12,27 @@
 {% endblock %}
 
 
-{% block main_content %}
 
+{% block main_content %}
 
 <section>
     <div class="flex justify-center">
         <div class="w-full md:w-7/12 xl:w-6/12 my-10 mb-16 p-3 shadow border-2 rounded bg-white">
-            <h3 class="text-center text-3xl font-semibold text-gray-600 my-5 mb-7"><span class="bg-slate-300 px-7 py-1 rounded">Post</span></h3>
-            <form action="" method="post" enctype="multipart/form-data">
+            <h3 class="text-center text-3xl font-semibold text-gray-600 my-5 mb-7"><span class="bg-slate-300 px-7 py-1 rounded">Story</span></h3>
+            <form action="" method='post' enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form|crispy}}
                 <div class="text-center mt-5">
-                    <button type="submit" class="px-4 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded">Add Post</button>
+                    <button type="submit" class="px-4 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded">Add Story</button>
                 </div>
             </form>
         </div>
     </div>
 </section>
+    
 
 
-
-{% endblock main_content %}
+{% endblock %}
 
 {% block script_block %}
 
@@ -45,7 +46,6 @@
             'block', 'mb-2', 'text-sm', 'font-medium', 'text-gray-900',
         )
     })
-    
 
     document.querySelector('input[type="file"]').classList.add(
 
@@ -55,8 +55,9 @@
 
     document.querySelector('input[type="file" i]').classList.add('bg-slate-400')
 
-    document.querySelector('textarea').setAttribute('rows', '2')
+    
 
 </script>
 
 {% endblock %}
+

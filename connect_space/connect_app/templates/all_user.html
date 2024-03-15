@@ -3,9 +3,48 @@
 
 {% load static %} 
 
+{% block link_block %}
+
+<link rel="stylesheet" href="{% static 'css/all_users.css' %}">
+
+{% endblock %}
 
 {% block main_content %}
 
-    {{all_users}}
+
+    <section>
+
+        <div class="flex justify-center flex-col items-center mb-16">
+            <h3 class="text-center text-3xl font-semibold text-gray-600 my-5"><span class="bg-slate-300 px-4 py-1 rounded"><i>Users</i> you may '<b class="font-bold">know</b>':</span></h3> 
+            {% for user in all_users %}
+
+                {% if user not in user_following and user != request.user %}
+                <div class="w-full sm:w-10/12 md:w-8/12 my-5 border-2 shadow-md bg-white px-2">
+    
+                    <div class="my-3 grid grid-cols-3 gap-10 justify-items-center items-center">
+                                        
+                        <img class="all-user-profile-img border-2" src="{{user.profile.image.url}}" alt="">
+                        
+                        {% if user.profile.first_name != None %}
+                            <span class="capitalize text-xl lg:text-2xl text-gray-600 ">{{user.profile.first_name}} {{user.profile.last_name}}</span>
+                        {% else %}
+                            <span class="capitalize text-xl lg:text-2xl text-gray-600 ">{{user}}</span>
+                        {% endif %}
+                        <a href="{% url 'other-user-detail' user.id %}">
+                            <button
+                            type="button"
+                            class="follow-btn rounded-full bg-blue-500 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600"
+                            >
+                            <i class="fa-solid fa-angles-right"></i>
+                            </button>
+                        </a>
+    
+                    </div>
+                </div>
+                {% endif %}
+    
+            {% endfor %}
+        </div>
+    </section>
 
 {% endblock %}

@@ -4,6 +4,13 @@
 
 {% load crispy_forms_tags %}
 
+{% block link_block %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+
+
+{% endblock %}
+
 
 {% block main_content %}
 
@@ -22,3 +29,35 @@
 </section>
 
 {% endblock main_content %}
+
+
+
+{% block script_block %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
+<script>
+
+    
+
+    document.querySelectorAll('label').forEach((lable)=>{
+        lable.classList.add(
+            'block', 'mb-2', 'text-sm', 'font-medium', 'text-gray-900',
+        )
+    })
+
+    document.querySelector('input[type="file"]').classList.add(
+
+    'block', 'w-full', 'text-sm', 'text-gray-900', 'border', 'border-gray-300', 'rounded-lg', 'cursor-pointer', 'bg-gray-50', 'focus:outline-none',
+
+    )
+
+    document.querySelector('input[type="file" i]').classList.add('bg-slate-400')
+
+    document.querySelector('textarea').setAttribute('rows', '2')
+
+    
+
+</script>
+
+{% endblock %}
