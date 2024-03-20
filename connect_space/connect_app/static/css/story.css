@@ -179,7 +179,7 @@ body {
   }
   
   .storiesWrapper {
-    aspect-ratio: 3/4 !important;
+    aspect-ratio: 4/4 !important;
     
     min-width: calc(320px, 600px);
     height: 40vh!important;

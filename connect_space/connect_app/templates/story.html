@@ -12,7 +12,7 @@
 {% block main_content %}
 
 
-<div class="user-story-active-div p-4 bg-gray-900">
+<div class="user-story-active-div bg-gray-900">
     {% comment %}                  
     <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow">
         <a href="{% url 'home' %}"><i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i></a>
@@ -88,53 +88,63 @@
     </div> 
     {% endcomment %}
     
-
-
-    <!-- code pen -->
-    
     <div class="storiesOverlay">
         <div class="storiesWrapper ">
+            
             <div class="storiesNab">
-            <span onclick="preStory()" id="preStory"></span>
-            <span onclick="nextStory()" id="nextStory"></span>
-            <span id="progressBar">
-                {% for story in all_user_story %}
-                <div class="eachSlide active"></div>
-                {% endfor %}
                 
-            </span>
+                <span onclick="preStory()" id="preStory"></span>
+                <span onclick="nextStory()" id="nextStory"></span>
+                <span id="progressBar">
+                    {% for story in all_user_story %}
+                    <div class="eachSlide active"></div>
+                    {% endfor %}
+                    
+                </span>
+                <div class="absolute top-7 left-7 flex items-center gap-2">
+                    <img class="h-12 w-12 rounded-full object-cover  border-2 border-slate-400" src="{{user_obj.profile.image.url}}" alt="">
+                    <span class="text-sm text-gray-300 px-2 capitalize ">
+                        {% if user_obj.profile.first_name != None and user_obj.profile.first_name != 'None' %}
+                        {{user_obj.profile.first_name}} {{user_obj.profile.last_name}}
+                        {% else %}
+                        {{user_obj.username}}
+                        {% endif %}
+                    </span>
+    
+                </div>
+               
             </div>
             <div class="storiesContainer">
 
-            {% for story in all_user_story %}
+                {% for story in all_user_story %}
 
-            <div class="eachStory active" style="background-image: url('https://ucnnews.live/uploads/front_end_news_content/compress1739670554405444.webp') ;">
-                {% if story.image %}
-                <img src="{{story.image.url}}" alt="Img 3">
-                {% else %}
+                <div class="eachStory active" style="background-image: url('https://ucnnews.live/uploads/front_end_news_content/compress1739670554405444.webp') ;">
+                    {% if story.image %}
+                    <img src="{{story.image.url}}" alt="Img 3">
+                    {% else %}
 
-                    {% if story.text != None and not story.image %}
+                        {% if story.text != None and not story.image %}
 
-                    <h3 class="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 italic"><span class="text-2xl p-1 px-4 text-slate-100 ">{{story.text|capfirst}}</span></h3>
-                    
+                        <h3 class="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 italic"><span class="text-2xl p-1 px-4 text-slate-100 ">{{story.text|capfirst}}</span></h3>
+                        
+                        {% endif %}
+
                     {% endif %}
 
-                {% endif %}
+                    <div class="storyMetaData">
 
-                <div class="storyMetaData">
-
-                {% if story.text != None and story.image %}
-                <h3>{{story.text|capfirst}}</h3>
-                
-                {% endif %}
-                <div>
-                    <span>{{story.created_date|timezone:"Asia/Kolkata"}}</span>
-                    <ion-icon onclick="storyNavigateShare()" name="share-social-outline"></ion-icon>
+                    {% if story.text != None and story.image %}
+                    <h3>{{story.text|capfirst}}</h3>
+                    
+                    {% endif %}
+                    <div>
+                        <span>{{story.created_date|timezone:"Asia/Kolkata"}}</span>
+                        <ion-icon onclick="storyNavigateShare()" name="share-social-outline"></ion-icon>
+                    </div>
+                    </div>
                 </div>
-                </div>
-            </div>
-        
-            {% endfor %}
+            
+                {% endfor %}
         
             </div>
         </div>
