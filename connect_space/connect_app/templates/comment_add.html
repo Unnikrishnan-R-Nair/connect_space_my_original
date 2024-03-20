@@ -50,10 +50,10 @@
 
                     {%else%}
 
-                        <form action="{% url 'post-like-dislike' post.id %}" class="inline" method="post">
+                        <form class="inline" method="">
                             {% csrf_token %}
-                            <button data-index="{{post.id}}" class="like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
-                            <button data-index="{{post.id}}" class="dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
+                            <button type="button" id="post{{post.id}}" data-post-id="{{post.id}}" class="like-btn" name="like" value="like" ><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> <span class="post-like-count">{{post.like_count}}</span></span></button>
+                            <button type="button" id="post{{post.id}}" data-post-id="{{post.id}}" class="dislike-btn" name="dislike" value="dislike"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> <span class="post-dislike-count">{{post.dislike_count}}</span></span></button>
 
                         </form>
 
@@ -176,5 +176,91 @@
     
 
 </script>
+
+<!-- like with ajax -->
+<script>
+
+    // ajax like 
+
+    document.querySelectorAll('.like-btn').forEach(function(eachLikeBtn){
+
+        eachLikeBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            //console.log('clicked')
+            
+    
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'like' %}",
+                data: {
+                    post_id: this.dataset.postId,
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    action: 'post',
+                },
+    
+                success: function(json){
+                    
+                    //console.log(json)
+                    //console.log(json.like_count)
+                    document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
+    
+                    document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
+                },
+    
+                error: function(xhr, errmsg, err){
+                    console.log(err);
+                }
+            })
+        })
+        
+
+
+    })
+    
+    
+
+</script>
+
+<!-- dislike with ajax -->
+<script>
+
+    document.querySelectorAll('.dislike-btn').forEach(function(eachDislikeBtn){
+
+        eachDislikeBtn.addEventListener('click', function(e){
+            //console.log('clicked')
+            e.preventDefault();
+            e.stopPropagation();
+    
+            $.ajax({
+                type: 'POST',
+                url: '{% url "dislike" %}',
+                data: {
+                    post_id: this.dataset.postId,
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    action: 'post',
+                },
+    
+                success: function(json) {
+    
+                    //console.log(json)
+    
+                    document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
+    
+                    document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
+                },
+    
+                error: function(xhr, errmsg, err) {
+                    console.log(err)
+                },
+            })
+    
+        })
+
+    })    
+
+    
+</script>
+
 
 {% endblock %}

@@ -170,6 +170,8 @@ class HomeView(View):
             
             pass
 
+        
+
 
         # story of user followed by logged user
 
@@ -746,6 +748,7 @@ class SearchPeopleView(View):
         return response
 
 
+
 @method_decorator([signin_required, never_cache], name='dispatch')
 class StoryView(View):
 
@@ -758,6 +761,7 @@ class StoryView(View):
         data = Story.objects.filter(user_object=user_obj)
 
         return render(request, 'story.html', {'all_user_story': data, 'user_obj': user_obj})
+
 
 
 @method_decorator([signin_required, never_cache], name='dispatch')

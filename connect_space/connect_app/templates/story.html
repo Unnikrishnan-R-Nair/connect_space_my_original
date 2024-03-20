@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load tz %}
+
 {% block link_block %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/story.css' %}">
@@ -11,7 +13,7 @@
 
 
 <div class="user-story-active-div p-4 bg-gray-900">
-                
+    {% comment %}                  
     <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow">
         <a href="{% url 'home' %}"><i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i></a>
         <div class="user-detail flex items-center px-2">
@@ -27,14 +29,13 @@
 
             </div>          
         </div>
-        <div id="default-carousel" class="relative w-full" data-carousel="slide">
+
+        <div id="default-carousel" class="relative w-full" data-carousel="static">
                 <!-- Carousel wrapper -->
                 <div class="relative h-56 overflow-hidden rounded-lg md:h-96 bg-gradient-to-t from-slate-500">
                     <!-- Item 1 -->
-                    
                         {% for story in all_user_story %}
-
-                        <div class="duration-900 ease-in-out" data-carousel-item> 
+                        <div class="hidden duration-700 ease-in-out" data-carousel-item> 
                             {% if story.user_object == request.user %}
                             <span class="px-2 bg-stone-200 border-2 rounded-full useful-btn text-center">
                                 <a href="{% url 'story-edit' story.id %}" class="z-50 hidden"><button><i class="fa-solid fa-pen text-blue-600"></i> Edit</button></a>
@@ -42,8 +43,10 @@
                             </span>
                             {% endif %}
                             <span class="text-md font-semibold text-slate-300 z-10 absolute top-0 left-2 italic px-3">{{story.created_date|date:"d M Y"}}</span>
+                            
                             {% if story.image %}
-                                 <img src="{{ story.image.url }}" class="z-1 absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+
+                                <img src="{{ story.image.url }}" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
             
                             {% endif %}
                             
@@ -61,7 +64,7 @@
                 <!-- Slider indicators -->
                 <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
                     {% for story in all_user_story %}
-                    <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide {{forloop.counter}}" data-carousel-slide-to="{{forloop.counter}}"></button>
+                    <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide {{forloop.counter}}" data-carousel-slide-to="{{forloop.counter0}}"></button>
                     {% endfor %}
                 </div>
                 <!-- Slider controls -->
@@ -82,14 +85,72 @@
                     </span>
                 </button>
         </div>
+    </div> 
+    {% endcomment %}
+    
+
+
+    <!-- code pen -->
+    
+    <div class="storiesOverlay">
+        <div class="storiesWrapper ">
+            <div class="storiesNab">
+            <span onclick="preStory()" id="preStory"></span>
+            <span onclick="nextStory()" id="nextStory"></span>
+            <span id="progressBar">
+                {% for story in all_user_story %}
+                <div class="eachSlide active"></div>
+                {% endfor %}
+                
+            </span>
+            </div>
+            <div class="storiesContainer">
+
+            {% for story in all_user_story %}
+
+            <div class="eachStory active" style="background-image: url('https://ucnnews.live/uploads/front_end_news_content/compress1739670554405444.webp') ;">
+                {% if story.image %}
+                <img src="{{story.image.url}}" alt="Img 3">
+                {% else %}
+
+                    {% if story.text != None and not story.image %}
+
+                    <h3 class="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 italic"><span class="text-2xl p-1 px-4 text-slate-100 ">{{story.text|capfirst}}</span></h3>
+                    
+                    {% endif %}
+
+                {% endif %}
+
+                <div class="storyMetaData">
+
+                {% if story.text != None and story.image %}
+                <h3>{{story.text|capfirst}}</h3>
+                
+                {% endif %}
+                <div>
+                    <span>{{story.created_date|timezone:"Asia/Kolkata"}}</span>
+                    <ion-icon onclick="storyNavigateShare()" name="share-social-outline"></ion-icon>
+                </div>
+                </div>
+            </div>
+        
+            {% endfor %}
+        
+            </div>
+        </div>
     </div>
 
     
-</div>
+</div> 
+
+
+
 
 {% endblock %}
 
 {% block script_block %}
+
+<script src="{% static 'js/story.js' %}"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 
