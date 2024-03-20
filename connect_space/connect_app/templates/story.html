@@ -1,36 +1,91 @@
 {% extends 'base.html' %}
 
-
-{% load static %} 
-
-{% load crispy_forms_tags %}
+{% load static %}
 
 {% block link_block %}
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
-
+<link rel="stylesheet" href="{% static 'css/story.css' %}">
 {% endblock %}
-
-
 
 {% block main_content %}
 
-<section>
-    <div class="flex justify-center">
-        <div class="w-full md:w-7/12 xl:w-6/12 my-10 mb-16 p-3 shadow border-2 rounded bg-white">
-            <h3 class="text-center text-3xl font-semibold text-gray-600 my-5 mb-7"><span class="bg-slate-300 px-7 py-1 rounded">Story</span></h3>
-            <form action="" method='post' enctype="multipart/form-data">
-                {% csrf_token %}
-                {{form|crispy}}
-                <div class="text-center mt-5">
-                    <button type="submit" class="px-4 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded">Add Story</button>
+
+<div class="user-story-active-div p-4 bg-gray-900">
+                
+    <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow">
+        <a href="{% url 'home' %}"><i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i></a>
+        <div class="user-detail flex items-center px-2">
+            <div class="flex items-center gap-2">
+                <img class="" src="{{user_obj.profile.image.url}}" alt="">
+                <span class="text-md font-semibold text-gray-300 px-2 capitalize">
+                    {% if user_obj.profile.first_name != None and user_obj.profile.first_name != 'None' %}
+                    {{user_obj.profile.first_name}} {{user_obj.profile.last_name}}
+                    {% else %}
+                    {{user_obj.username}}
+                    {% endif %}
+                </span>
+
+            </div>          
+        </div>
+        <div id="default-carousel" class="relative w-full" data-carousel="slide">
+                <!-- Carousel wrapper -->
+                <div class="relative h-56 overflow-hidden rounded-lg md:h-96 bg-gradient-to-t from-slate-500">
+                    <!-- Item 1 -->
+                    
+                        {% for story in all_user_story %}
+
+                        <div class="duration-900 ease-in-out" data-carousel-item> 
+                            {% if story.user_object == request.user %}
+                            <span class="px-2 bg-stone-200 border-2 rounded-full useful-btn text-center">
+                                <a href="{% url 'story-edit' story.id %}" class="z-50 hidden"><button><i class="fa-solid fa-pen text-blue-600"></i> Edit</button></a>
+                                <a href="{% url 'story-delete' story.id %}" class="z-50"><button><i class="fa-solid fa-trash text-red-600"></i> Delete</button></a>
+                            </span>
+                            {% endif %}
+                            <span class="text-md font-semibold text-slate-300 z-10 absolute top-0 left-2 italic px-3">{{story.created_date|date:"d M Y"}}</span>
+                            {% if story.image %}
+                                 <img src="{{ story.image.url }}" class="z-1 absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+            
+                            {% endif %}
+                            
+                            {% if story.text != None and not story.image %}
+                            <p class="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 italic"><span class="text-2xl p-1 px-4 text-slate-100 ">{{story.text}}</span></p>
+                            {% elif story.text != None %}
+                            <p class="absolute bottom-0 left-0 right-0 italic bg-gradient-to-t from-slate-500 text-center"><span class="text-lg p-1 px-4 text-white">{{story.text}}</span></p>
+
+                            {% endif %}
+
+                        </div>
+                        {% endfor %}
+                
                 </div>
-            </form>
+                <!-- Slider indicators -->
+                <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+                    {% for story in all_user_story %}
+                    <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide {{forloop.counter}}" data-carousel-slide-to="{{forloop.counter}}"></button>
+                    {% endfor %}
+                </div>
+                <!-- Slider controls -->
+                <button type="button" class="absolute top-10 bottom-10 start-0 z-30 flex items-center justify-center h-50 px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                        <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                        </svg>
+                        <span class="sr-only">Previous</span>
+                    </span>
+                </button>
+                <button type="button" class="absolute top-10 bottom-10 end-0 z-30 flex items-center justify-center h-50 px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                        <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <span class="sr-only">Next</span>
+                    </span>
+                </button>
         </div>
     </div>
-</section>
-    
 
+    
+</div>
 
 {% endblock %}
 
@@ -38,26 +93,4 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 
-<script>
-
-
-    document.querySelectorAll('label').forEach((lable)=>{
-        lable.classList.add(
-            'block', 'mb-2', 'text-sm', 'font-medium', 'text-gray-900',
-        )
-    })
-
-    document.querySelector('input[type="file"]').classList.add(
-
-    'block', 'w-full', 'text-sm', 'text-gray-900', 'border', 'border-gray-300', 'rounded-lg', 'cursor-pointer', 'bg-gray-50', 'focus:outline-none',
-
-    )
-
-    document.querySelector('input[type="file" i]').classList.add('bg-slate-400')
-
-    
-
-</script>
-
 {% endblock %}
-

@@ -3,6 +3,8 @@
 
 {% load static %} 
 
+{% load tz %}
+
 {% load crispy_forms_tags %}
 
 {% block link_block %}
@@ -17,10 +19,13 @@
     <div class="flex justify-center">
         <div class="w-full md:w-7/12 xl:w-6/12 my-2 p-3 shadow border-2 rounded bg-white">
             <h3 class="text-center text-3xl font-semibold text-gray-600 my-5 mb-7"><span class="bg-slate-300 px-7 py-1 rounded">Story</span></h3>
-            <p class="text-slate-600">Story date : {{story.updated_date}}</p>
+            <p class="text-slate-600">Story date : {{story.updated_date|timezone:"Asia/Kolkata"}}</p>
+            {% if story.image %}
             <img src="{{story.image.url}}" alt="">
-            <p class="text-xl text-slate-600 text-center">{{story.text}}</p>
-
+            {% endif %}
+            {% if story.text != None %}
+            <p class="text-xl text-slate-600 text-center mt-3">Text : {{story.text}}</p>
+            {% endif %}
         </div>
     </div>
 
@@ -38,7 +43,7 @@
                     <button type="submit" class="px-4 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded me-4">Edit Story</button>
                     
                     <a href="{% url 'story-delete' story.id %}">
-                        <button type="submit" class="px-4 py-1 bg-red-600 hover:bg-red-700 text-white text-lg rounded">
+                        <button type="button" class="px-4 py-1 bg-red-600 hover:bg-red-700 text-white text-lg rounded">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </a>

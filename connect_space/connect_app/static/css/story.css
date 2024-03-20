@@ -1,0 +1,146 @@
+
+
+.user-story-active-div {
+    
+    position: fixed;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+    transition: all 1s ease;
+    backdrop-filter: blur(10px);
+    background-color: rgba(62, 62, 62, 0.371);
+    min-width: 320px;
+}
+
+.user-story-active-div .story-div {
+    position: relative;
+    min-width: 270px;
+    margin-top: 50px;
+    overflow: hidden;
+    border-radius: 5px;
+    
+}
+
+
+.user-story-active-div .story-div i.fa-solid.fa-circle-xmark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.user-story-active-div .user-detail {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.user-story-active-div .user-detail div img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+
+.user-story-active-div .story-div .story-details {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding-bottom: 30px;
+}
+.user-story-active-div .story-div .story-detail-outter {
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-width: thin;
+    
+    
+}
+
+
+.user-story-active-div .story-div .story-detail-outter .story-details img {
+    height: 300px;
+}
+
+
+.useful-btn {
+    position: absolute;
+    top: 0;
+    right: 1px;
+    
+    z-index: 1000!important;
+}
+
+.story-active-div.active {
+    z-index: 5;
+    position: fixed;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+    transition: all 1s ease;
+    backdrop-filter: blur(5px);
+    background-color: rgba(128, 128, 128, 0.371);
+    min-width: 320px;
+}
+
+
+.story-active-div .story-div {
+    position: relative;
+    min-width: 270px;
+    margin-top: 50px;
+    overflow: hidden;
+    border-radius: 5px;
+    
+}
+
+.story-active-div .story-div i.fa-solid.fa-circle-xmark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.story-active-div .user-detail {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.story-active-div .user-detail div img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+
+@media (max-width:576px) {
+
+
+    .user-story-active-div .story-div {
+        margin-top: 60px;
+    }
+
+    .story-active-div .story-div {
+        margin-top: 60px;
+    }
+}
+
+
+
+@media (max-width:425px) {
+    
+    .user-story-active-div .story-div .story-detail-outter .story-details img {
+        height: 200px;
+    }
+
+    .user-story-active-div .story-div {
+        margin-top: 100px;
+    }
+
+    .story-active-div .story-div {
+        margin-top: 100px;
+    }
+}

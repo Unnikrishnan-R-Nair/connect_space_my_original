@@ -6,12 +6,12 @@
 
 {% block link_block %}
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
-
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
 {% endblock %}
 
 {% block main_content %}
+<!-- search form -->
 <section>
 
     <div class="py-3 bg-slate-300 text-center">
@@ -25,8 +25,10 @@
 
 
 <section>
+
     <div class="grid grid-cols-6 gap-4 mx-3 sm:mx-10 mt-5 mb-10">
-        
+
+        <!-- user section -->
         <div class="rounded shadow-sm user-section border bg-white " style="height: fit-content;">
             <div class="cover-photo">
 
@@ -46,8 +48,9 @@
 
                     {% endif %}
                     
-                    
-                    <p></p>
+                    {% if profile_obj.bio %}
+                    <p class="mt-2">{{profile_obj.bio}}</p>
+                    {% endif %}
                     <div class="flex mt-5 justify-center items-center">
                         <div class="border-r-2 px-4">
                             <a href="{% url 'my-posts' %}"><span class="font-bold">{{post_count.total_post}}</span></a>
@@ -82,10 +85,13 @@
                 <!-- STORY -->
                 {% if all_user_story %}
                 <li class="card user-story-card border-b-2 p-3 text-lg">
-                    <div class="grid grid-cols-4 justify-center items-center gap-3">
-                        <img class="user-profile-image col-start-2" src="{{request.user.profile.image.url}}" alt="">
-                        <span class="col-start-3">Your stories</span> 
-                    </div>
+                    <a href="{% url 'story' request.user.id %}">
+
+                        <div class="grid grid-cols-4 justify-center items-center gap-3">
+                            <img class="user-profile-image col-start-2" src="{{request.user.profile.image.url}}" alt="">
+                            <span class="col-start-3">Your stories</span> 
+                        </div>
+                    </a>
                 </li>
                 {% else %}
                 <li class="p-3 border-b-2 text-center text-lg">
@@ -98,18 +104,21 @@
                 {% for user in user_profiles %}
                     {% if user.user_object in story_objects.keys %}
                     
-                        <li data-user-id="{{user.user_object.id}}" class="card story-card border-b-2 p-3 text-lg">
-                            <div class="grid grid-cols-4 justify-center items-center gap-3">
-                                <img class="profile-image col-start-2" src="{{user.image.url}}" alt="">
-                                <span class="col-start-3 capitalize">
-                                    {% if user.first_name != None and 'None' %}
-                                    {{user.first_name}}
-                                    {% else %}
-                                    {{user.user_object.username}}
-                                    {% endif %}
-                                </span> 
-                            </div>
-                        </li>
+                        <a href="{% url 'story' user.user_object.id %}">
+                            
+                            <li data-user-id="{{user.user_object.id}}" class="card story-card border-b-2 p-3 text-lg">
+                                <div class="grid grid-cols-4 justify-center items-center gap-3">
+                                    <img class="profile-image col-start-2" src="{{user.image.url}}" alt="">
+                                    <span class="col-start-3 capitalize">
+                                        {% if user.first_name != None and 'None' %}
+                                        {{user.first_name}}
+                                        {% else %}
+                                        {{user.user_object.username}}
+                                        {% endif %}
+                                    </span> 
+                                </div>
+                            </li>
+                        </a>
 
                     {% endif %}
 
@@ -118,183 +127,11 @@
 
             </ul>
 
-            <!-- story active session -->
-
-            <!-- logged user stories -->
-            {% if all_user_story %}
-            <div class="user-story-active-div p-4 hidden">
-                
-                <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow">
-                    <i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i>
-                    <div class="user-detail flex items-center px-2">
-                        <div class="flex items-center gap-2">
-                            <img class="" src="{{request.user.profile.image.url}}" alt="">
-                            <span class="text-md font-semibold text-gray-300 px-2 capitalize">
-                                {% if request.user.profile.first_name != None and request.user.profile.first_name != 'None' %}
-                                {{request.user.profile.first_name}} {{request.user.profile.last_name}}
-                                {% else %}
-                                {{request.user}}
-                                {% endif %}
-                            </span>
-
-                        </div>          
-                    </div>
-                    <div id="default-carousel" class="relative w-full" data-carousel="slide">
-                            <!-- Carousel wrapper -->
-                            <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
-                                <!-- Item 1 -->
-                                
-                                {% for story in all_user_story %}
-
-                                <div class="hidden duration-900 ease-in-out" data-carousel-item> 
-                                    <span class="px-2 bg-stone-200 border-2 rounded-full useful-btn text-center">
-                                        <a href="{% url 'story-edit' story.id %}" class="z-50"><button><i class="fa-solid fa-pen text-blue-600"></i> Edit</button></a>
-                                    </span>
-                                    <span class="text-md font-semibold text-slate-700 z-10 absolute top-0 left-2 italic bg-gray-200 px-3">{{story.created_date|date:"d M Y"}}</span>
-                                    {% if story.image %}
-                                    <img src="{{ story.image.url }}" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
-                                    {% endif %}
-                                    <p class="absolute bottom-0 left-0 italic px-1"><span class="text-lg p-1 px-4 bg-slate-100">{{story.text}}</span></p>
-                                    
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <!-- Slider indicators -->
-                            <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
-                                {% for story in all_user_story %}
-                                <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide {{forloop.counter}}" data-carousel-slide-to="{{forloop.counter}}"></button>
-                                {% endfor %}
-                            </div>
-                            <!-- Slider controls -->
-                            <button type="button" class="absolute top-10 bottom-10 start-0 z-30 flex items-center justify-center h-50 px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
-                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                                    <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
-                                    </svg>
-                                    <span class="sr-only">Previous</span>
-                                </span>
-                            </button>
-                            <button type="button" class="absolute top-10 bottom-10 end-0 z-30 flex items-center justify-center h-50 px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                                    <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                                    </svg>
-                                    <span class="sr-only">Next</span>
-                                </span>
-                            </button>
-                    </div>
-                </div>
-
-                <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow hidden">
-                    <i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i>
-                    <i class="fa-solid fa-chevron-left fa-2x text-slate-400 hover:text-slate-300"></i>
-                    <i class="fa-solid fa-chevron-right fa-2x text-slate-400 hover:text-slate-300"></i>
-                    <div class="user-detail flex items-center px-2">
-                        <div class="flex items-center gap-2">
-                            <img class="" src="{{request.user.profile.image.url}}" alt="">
-                            <span class="text-md font-semibold text-gray-300 px-2">{{request.user.profile.first_name}} {{request.user.profile.last_name}}</span>
-
-                        </div>          
-                    </div>
-                    
-                    {% if all_user_story %}
-                    <div class="story-detail-outter flex overflow-x-auto flex gap-5 p-3 px-5 snap-x ">
-                        {% for story in all_user_story %}
-                            <div class="story-details px-4 flex-none snap-center ">
-                                <span class="text-md font-semibold text-slate-300">{{story.created_date|date:"d M Y"}}</span>
-                                {% if story.image %}
-                                <img class="rounded-md mx-auto" src="{{story.image.url}}" alt="">
-                                {% endif %}
-                                <p class="text-center  mt-2"><span class="text-lg p-1 px-4 bg-slate-100 ">{{story.text}}</span></p>
-                                <span class="px-4 bg-stone-200 border-2 rounded-md useful-btn">
-                                    <a href="{% url 'story-delete' story.id %}"><i class="fa-solid fa-trash text-red-600 me-4"></i></a>
-                                    <a href=""><i class="fa-solid fa-pen text-blue-600"></i></a>
-                                </span>
-                                
-                            </div>
-                            
-                        {% endfor %}
-                        
-                    </div>
-    
-                    {% endif %}
-
-                </div>
-            </div>
-            {% endif %}
-            <!-- logged user stories end-->
-            <!-- other user stories -->
-            {% for user in user_profiles %}
-                {% if user.user_object in story_objects.keys %}
-                <div id="user{{user.user_object.id}}" class="story-active-div p-4 hidden">
-                    
-                    <div class="story-div w-full sm:w-8/12 md:w-7/12 xl:w-6/12 mx-auto p-3 bg-gray-600 shadow">
-                        <i class="fa-solid fa-circle-xmark fa-2x text-slate-400 hover:text-slate-300"></i>
-                        <div class="user-detail flex items-center px-2">
-                            <div class="flex items-center gap-2">
-                                <img class="" src="{{user.image.url}}" alt="">
-                                <span class="text-md font-semibold text-gray-300 px-2 capitalize">
-                                    {% if user.profile.first_name != None and user.profile.first_name != 'None' %}
-                                    {{user.profile.first_name}} {{user.profile.last_name}}
-                                    {% else %}
-                                    {{user.user_object.username}}
-                                    {% endif %}
-                                </span>
-
-                            </div>          
-                        </div>
-                        <div id="default-carousel" class="relative w-full" data-carousel="slide">
-                                <!-- Carousel wrapper -->
-                                <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
-                                    <!-- Item 1 -->
-                                    {% for story in user.user_object.story.all %}
-
-                                    <div class="hidden duration-900 ease-in-out" data-carousel-item> 
-                                        <span class="text-md font-semibold text-slate-700 z-10 absolute top-0 left-2 italic bg-gray-200 px-3">{{story.created_date|date:"d M Y"}}</span>
-                                        {% if story.image %}
-                                        <img src="{{ story.image.url }}" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
-                                        {% endif %}
-                                        <p class="absolute bottom-0 left-0 italic px-1"><span class="text-lg p-1 px-4 bg-slate-100 ">{{story.text}}</span></p>
-                                        
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                <!-- Slider indicators -->
-                                <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
-                                    {% for story in user.user_object.story.all %}
-                                    <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide {{forloop.counter}}" data-carousel-slide-to="{{forloop.counter}}"></button>
-                                    {% endfor %}
-                                </div>
-                                <!-- Slider controls -->
-                                <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
-                                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                                        <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
-                                        </svg>
-                                        <span class="sr-only">Previous</span>
-                                    </span>
-                                </button>
-                                <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-                                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                                        <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                                        </svg>
-                                        <span class="sr-only">Next</span>
-                                    </span>
-                                </button>
-                        </div>
-                    </div>
-
-                    
-                </div>
-                {% endif %}
-            {% endfor %}
-            <!-- other user stories end -->
-            <!-- story active session end -->
+            
         </div>
 
-        
-        <div class="post-story-section">
+        <!-- post section -->
+        <div class="post-section">
             <!-- POST -->
             {% for post in all_post %}
             <div class="border rounded p-6 my-5 shadow-md bg-white post-div">
@@ -427,7 +264,7 @@
 
         <!-- People you may know -->
         {% if user_profiles|length > 0 %} 
-        <div class="rounded shadow-sm border bg-white people-section">
+        <div class="rounded shadow-sm border bg-white people-section transition-all">
             <div class="rounded p-3">
                 <h2 class="text-lg font-semibold text-center ">People you may know</h2>
                 
@@ -510,9 +347,9 @@
                 </ul>
             </div>
         </div>
+    
+
     </div>
-
-
     
 </section>
 
@@ -521,9 +358,6 @@
 
 {% block script_block %}
 
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 
 <script src="{% static 'js/home.js' %}"></script>
 

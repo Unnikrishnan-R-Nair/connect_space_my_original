@@ -1,31 +1,245 @@
 {% extends "base.html" %}
 
+{% load static %}
 
+{% block link_block %}
+
+<link rel="stylesheet" href="{% static 'css/other_user_details.css' %}">
+
+{% endblock %}
 {% block main_content %}
 
 
-
 <section>
+
+    <div class="grid grid-cols-6 gap-4 mx-3 sm:mx-10 mt-5 mb-10">
+
+        <!-- user section -->
+        <div class="rounded shadow-sm user-section border bg-white pb-10 px-3 " style="height: fit-content;">
+            <div class="cover-photo">
+
+            </div>
+            <div class="user-detail px-1">
+                <div class="text-center">
+
+                    <img class="rounded mt-10 mx-auto mb-3 border-white border-2 user-image" src="{{profile_obj.image.url}}" alt="">
+                    
+                    {% if profile_obj.first_name != None and profile_obj.first_name != 'None' %}
+
+                    <h4 class="font-semibold">{{ profile_obj.first_name }} {{profile_obj.last_name}}</h4>
+
+                    {% else %}
+
+                    <h4 class="font-semibold capitalize">{{profile_obj.user_object.username}}</h4>
+
+                    {% endif %}
+                    
+                    {% if profile_obj.bio %}
+                    <p class="mt-2">{{profile_obj.bio}}</p>
+                    {% endif %}
+                    
+                    <div class="flex mt-5 justify-center items-center">
+                        <div class="border-r-2 px-4">
+                            <a><span class="font-bold">{{post_count}}</span></a>
+                            <div>{% if post_count > 1 %}Posts{% else %}Post{% endif %}</div>
+                        </div>
+                        <div class="border-r-2 px-4">
+                            <a><span class="font-bold">{% if profile_obj.user_object.following.follower_count > 0 %}{{profile_obj.user_object.following.follower_count}}{% else %}0{% endif %}</span></a>
+                            <div>{% if profile_obj.user_object.following.follower_count > 1 %} Followers {% else %} Follower {% endif %}</div>
+
+                        </div>
+                        <div class=" px-4">
+                            <a><span class="font-bold">{% if profile_obj.user_object.following.following_count %}{{profile_obj.user_object.following.following_count}}{% else %}0{% endif %}</span></a>
+                            <div>Following</div>
+
+                        </div>
+                    </div>
+                    <div class="text-center flex gap-5 justify-center mt-5">
+
+                        {% if is_following %}
+                            
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="unfollow-btn rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
+                                    <i class="fa-solid fa-check"></i> Following
+                                </button>
+                            </form>
+                        
+                        {% else %}
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="follow-btn rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                                <i class="fa-solid fa-plus mr-1"></i> Follow
+                            </button>
+                        </form>
+                        {% endif %}
+                        <!-- <a href="{% url 'all-user' %}">
+        
+                            <button
+                            type="button"
+                            class="inline-flex items-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-600"
+                            >
+                                More users
+                            </button>
+                        </a> -->
+        
+                        
+        
+                    </div>
+                </div>
+            </div>
+         
+        </div>
+
+        
+
+        <!-- post section -->
+        <div class="post-section">
+            <!-- POST -->
+            {% if post_obj %}
+            {% for post in post_obj %}
+            <div class="border rounded p-6 my-5 shadow-md bg-white post-div">
+                <div class="flex items-center gap-4">
+                    <img class="post-owner-image" src="{{post.post_by.profile.image.url}}" alt="">
+                    <span class="text-slate-600 capitalize">{% if post.post_by.profile.first_name != None and post.post_by.profile.first_name != 'None' %}{{post.post_by.profile.first_name}} {% else %}{{post.post_by}}{% endif %} ,</span>
+                    <span class="text-slate-500">{{post.created_date|date:"d M Y"}}</span>
+                </div>
+                <div class="mt-4 px-3">
+                    {% if post.title != None %}
+                    <h4 class="font-semibold text-lg">{{post.title}}</h4>
+                    {% endif %}
+                    {% if post.image %}
+                    <img class="rounded post-image my-3" src="{{post.image.url}}" alt="">
+                    
+                    {% endif %}
+                    <p class="mt-4">{{post.content}}</p>
+
+                </div>
+                <!-- post like and dislike section -->
+                <div class="my-5">
+
+                    <form class="inline" method="">
+                        {% csrf_token %}
+                        <button type="button" id="post{{post.id}}" data-post-id="{{post.id}}" class="like-btn" name="like" value="like" ><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> <span class="post-like-count">{{post.like_count}}</span></span></button>
+                        <button type="button" id="post{{post.id}}" data-post-id="{{post.id}}" class="dislike-btn" name="dislike" value="dislike"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> <span class="post-dislike-count">{{post.dislike_count}}</span></span></button>
+
+                    </form>
+
+                    <span class="text-orange-500 comment-count-span"><i class="fa-regular fa-comment"></i> <small>Comments</small> {{post.comment_count}}</span>
+                    
+                </div>
+                <div>
+                    <!-- Comment for post -->
+                    <div>
+                        <div class="text-end mb-2">
+                            <a href="{% url 'comment-add' post.id %}"><button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1 rounded text-white shadow-sm"><i class="fa-solid fa-plus mr-3px"></i> Comment</button></a>
+                        </div>
+
+                        <!-- ajax form implementation -->
+                        <!-- <form action="" class="commentform" data-post-id="{{post.id}}" id="commentform{{post.id}}"  method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+   
+                            <div class="flex">
+                                <textarea name="comment_text" type="text" class="w-11/12 border-2 px-2 rounded"></textarea>
+                                <i class="fa-solid fa-paperclip"></i>
+                                <button type="submit" class="comment-submit border p-3 px-4 ml-4 rounded bg-blue-500 text-zinc-100 text-sm"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                            <div class="my-4">
+                                <span class="me-5 border-2 px-3 py-1 text-cyan-600">
+                                    <i class="fa-regular fa-image"></i> Photo
+                                    <input class="comment_image" name="comment_image" type="file" accept="image/*">
+                                </span>
+                                
+                            </div>
+                        </form>  -->
+
+                    </div>
+
+                    {% if post.comment_count > 0 %}
+                    <div class="comment-section p-2 rounded bg-slate-50">
+                        <!-- display all comments -->
+
+                        {% for comment in all_comments %}
+                            
+                            {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
+                                <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
+                                    <div class="flex flex-col items-center user-div">
+                                        <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
+                                        <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
+                                        <span></span>
+                                    </div>
+                                    <div>
+                                        {% if comment.comment_image.url != None %}
+                                        <img style="width: 200px;" class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
+                                        {% endif %}
+                                        <p class="my-2">{{comment.comment_text}}</p>
+
+                                    </div>
+                                
+                                </div>
+                            {% elif comment.post_object.id == post.id and comment.comment_by != request.user  %}
+
+                                <div class="flex justify-end">
+
+                                    <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-slate-100">
+                                        <div class="flex flex-col items-center user-div">
+                                            <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt=""> 
+                                            <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
+                                            <span></span>
+                                        </div>
+                                        <div>
+                                            {% if comment.comment_image.url != None %}
+                                            <img style="width: 200px; " class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
+                                            {% endif %}
+                                            <p class="my-2">{{comment.comment_text}}</p>
+
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+
+            <h1 class="text-center mt-10 text-3xl text-gray-300">No posts</h1>
+
+            {% endif %}
+        </div>
+
+    </div>
+    
+</section>
+
+
+
+<!-- <section>
     <div class="flex justify-center">
         <div class="w-10/12 sm:w-7/12 xl:w-5/12 border-2 shadow-md my-5 py-5 px-7 bg-white mx-auto">
             <a href="{% url 'home' %}" class="border-slate-300 border rounded-md px-2 ">
                 <i class="fa-solid fa-arrow-left"></i> Home
             </a>
             <div class="my-5">
-                <img class="rounded-full mx-auto border-2 border-slate-300" src="{{data.image.url}}" alt="" style="width: 200px; height: 200px; object-fit:cover;">
+                <img class="rounded-full mx-auto border-2 border-slate-300" src="{{profile_obj.image.url}}" alt="" style="width: 200px; height: 200px; object-fit:cover;">
             </div>
             
-            {% if data.first_name != None %}
-            <p class="capitalize my-5 text-2xl text-center">{{data.first_name}} {{data.last_name}}</p>
+            {% if profile_obj.first_name != None %}
+            <p class="capitalize my-5 text-2xl text-center">{{profile_obj.first_name}} {{profile_obj.last_name}}</p>
             {% else %}
-            <p class="capitalize my-5 text-2xl  text-center">{{data.user_object.username}}</p>
+            <p class="capitalize my-5 text-2xl  text-center">{{profile_obj.user_object.username}}</p>
             {% endif %}
-            {% if data.bio != None %}
-            <p class="my-5 text-lg  text-center">{{data.bio}}</p>
+            {% if profile_obj.bio != None %}
+            <p class="my-5 text-lg  text-center">{{profile_obj.bio}}</p>
             {% endif %}
             <div class="my-5  text-center">
-                <span class="mr-10 sm:text-xl">Followers (<b>{{data.user_object.following.follower_count}}</b>)</span>
-                <span class="sm:text-xl">Following (<b>{{data.user_object.following.following_count}}</b>)</span>
+                <span class="mr-10 sm:text-xl">Followers (<b>{{profile_obj.user_object.following.follower_count}}</b>)</span>
+                <span class="sm:text-xl">Following (<b>{{profile_obj.user_object.following.following_count}}</b>)</span>
             </div>
             <div class="text-center flex gap-5 justify-center mt-2">
 
@@ -64,7 +278,7 @@
     </div>
 
     
-</section>
+</section> -->
 
 
 {% endblock main_content %}
@@ -82,7 +296,7 @@
             url: '{% url "unfollow" %}',
 
             data: {
-                user_id: '{{data.id}}',
+                user_id: '{{profile_obj.id}}',
                 csrfmiddlewaretoken: '{{csrf_token}}',
                 action: 'post',
             },
@@ -110,7 +324,7 @@
             type: 'POST',
             url: '{% url "follow" %}',
             data: {
-                user_id: '{{data.id}}',
+                user_id: '{{profile_obj.id}}',
                 csrfmiddlewaretoken: '{{csrf_token}}',
                 action: 'post',
             },
@@ -131,4 +345,91 @@
 
 </script>
 
+<!-- like with ajax -->
+<script>
+
+    // ajax like 
+
+    document.querySelectorAll('.like-btn').forEach(function(eachLikeBtn){
+
+        eachLikeBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            //console.log('clicked')
+            
+    
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'like' %}",
+                data: {
+                    post_id: this.dataset.postId,
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    action: 'post',
+                },
+    
+                success: function(json){
+                    
+                    //console.log(json)
+                    //console.log(json.like_count)
+                    document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
+    
+                    document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
+                },
+    
+                error: function(xhr, errmsg, err){
+                    console.log(err);
+                }
+            })
+        })
+        
+
+
+    })
+    
+    
+
+</script>
+
+<!-- dislike with ajax -->
+<script>
+
+    document.querySelectorAll('.dislike-btn').forEach(function(eachDislikeBtn){
+
+        eachDislikeBtn.addEventListener('click', function(e){
+            //console.log('clicked')
+            e.preventDefault();
+            e.stopPropagation();
+    
+            $.ajax({
+                type: 'POST',
+                url: '{% url "dislike" %}',
+                data: {
+                    post_id: this.dataset.postId,
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    action: 'post',
+                },
+    
+                success: function(json) {
+    
+                    //console.log(json)
+    
+                    document.querySelector(`#post${json.post_id} .post-like-count`).textContent = json.like_count;
+    
+                    document.querySelector(`#post${json.post_id} .post-dislike-count`).textContent = json.dislike_count;
+                },
+    
+                error: function(xhr, errmsg, err) {
+                    console.log(err)
+                },
+            })
+    
+        })
+
+    })    
+
+    
+</script>
+
+
 {% endblock %}
+

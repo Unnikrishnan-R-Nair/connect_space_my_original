@@ -34,6 +34,7 @@ from django.utils import timezone
 
 # Create your views here.
 
+
 class SignUpView(View):
 
     def get(self, request, *args, **kwargs):
@@ -56,17 +57,53 @@ class SignUpView(View):
 
 
 
+class SignInView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        form = LoginForm()
+
+        return render(request, 'login.html', {'form':form})
+
+    def post(self, request, *args, **kwargs):
+
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+
+            uname = form.cleaned_data.get('username')
+
+            pwd = form.cleaned_data.get('password')
+
+            user_object = authenticate(request, username=uname, password=pwd)
+
+            if user_object:
+
+                login(request, user_object)
+
+                return redirect('home')
+            
+        return render(request, 'login.html', {'form': form})
+    
+
+@method_decorator([signin_required, never_cache], name='dispatch')
+class SignOutView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        if request.user.is_authenticated:
+
+            logout(request)
+
+        return redirect('signin')
+    
+
+
 
 @method_decorator([signin_required, never_cache], name='dispatch')
 class HomeView(View):
 
     def get(self, request, *args, **kwargs):
-
-        #profile
-        # post
-        # following
-        # Story
-        # comment
 
         # user followers
 
@@ -85,8 +122,6 @@ class HomeView(View):
         profile_obj = UserProfile.objects.get(user_object=request.user)
 
         all_post_obj = Post.objects.all()
-
-        #print(all_post_obj)
  
         logged_in_user_post = Post.objects.filter(post_by=request.user)
 
@@ -102,33 +137,41 @@ class HomeView(View):
 
         # story 
 
-        logged_in_user_story = Story.objects.filter(user_object=request.user)
+        try:
 
-        for story in logged_in_user_story:
+            logged_in_user_story = Story.objects.filter(user_object=request.user)
 
-            print('updated',story.updated_date)
+            for story in logged_in_user_story:
 
-            story_updated_date = story.updated_date
+                print('updated',story.updated_date)
 
-            story_expiry_date = story_updated_date + timezone.timedelta(days=1)
+                story_updated_date = story.updated_date
 
-            print('exp:', story_expiry_date)
+                story_expiry_date = story_updated_date + timezone.timedelta(days=1)
 
-            # now = datetime.today() # time naive object
-            # print('today', now)
+                print('exp:', story_expiry_date)
 
-            # print('tommorrow', (now + timedelta(days=1)))
+                # now = datetime.today() # time naive object
+                # print('today', now)
 
-            # print(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+                # print('tommorrow', (now + timedelta(days=1)))
 
-            print('exp_date', (story_updated_date + timedelta(days=1)))
+                # print(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
 
-            print(timezone.now() + timezone.timedelta(days=2))
+                # print('exp_date', (story_updated_date + timedelta(days=1)))
 
-            if story_expiry_date <= timezone.now() :
+                # print(timezone.now() + timezone.timedelta(days=2))
 
-                story.delete()  # logged user story delete
+                if story_expiry_date <= timezone.now() :
 
+                    story.delete()  # logged user story delete
+
+        except:
+            
+            pass
+
+
+        # story of user followed by logged user
 
         admin_obj = User.objects.get(username='admin')
 
@@ -171,9 +214,8 @@ class HomeView(View):
                                             })
     
 
-
-
 # comment view
+@method_decorator([signin_required, never_cache], name='dispatch')
 class CommentView(View):
 
     def get(self, request, *args, **kwargs):
@@ -182,8 +224,6 @@ class CommentView(View):
 
         post_obj = Post.objects.get(id=id)
         
-        comment_by = request.user
-
         all_comments = Comment.objects.all()
 
         comment_obj = Comment(comment_by=request.user, post_object=post_obj)
@@ -199,8 +239,6 @@ class CommentView(View):
 
         post_obj = Post.objects.get(id=id)
 
-        comment_by = request.user
-
         all_comments = Comment.objects.all()
 
         comment_obj = Comment(comment_by=request.user, post_object=post_obj)
@@ -215,53 +253,10 @@ class CommentView(View):
 
         return render(request, 'comment_add.html', {'comment_form': form, 'post': post_obj, 'all_comments': all_comments})
 
+ 
 
-
-    
-
-
-class SignInView(View):
-
-    def get(self, request, *args, **kwargs):
-
-        form = LoginForm()
-
-        return render(request, 'login.html', {'form':form})
-
-    def post(self, request, *args, **kwargs):
-
-        form = LoginForm(request.POST)
-
-        if form.is_valid():
-
-            uname = form.cleaned_data.get('username')
-
-            pwd = form.cleaned_data.get('password')
-
-            user_object = authenticate(request, username=uname, password=pwd)
-
-            if user_object:
-
-                login(request, user_object)
-
-                return redirect('home')
-            
-        return render(request, 'login.html', {'form': form})
-    
-
-
-class SignOutView(View):
-
-    def get(self, request, *args, **kwargs):
-
-        if request.user.is_authenticated:
-
-            logout(request)
-
-        return redirect('signin')
-    
-
-
+# logged user profile view
+@method_decorator([signin_required, never_cache], name='dispatch')
 class ProfileView(View):
 
     def get(self, request, *args, **kwargs):
@@ -295,8 +290,8 @@ class ProfileView(View):
 
 
 
-# other user details view
-    
+# other user details view   
+@method_decorator([signin_required, never_cache], name='dispatch')
 class OtherUserDetailView(View):
 
      def get(self, request, *args, **kwargs):
@@ -305,16 +300,15 @@ class OtherUserDetailView(View):
 
         data = UserProfile.objects.get(id=id)
 
-        try:
+        post_obj = Post.objects.filter(post_by=data.user_object)
 
-            follow_obj = Follow.objects.get(follower=request.user)
-        
-        except:
+        post_count = data.user_object.post_owner.all().count()
 
-            follow_obj = Follow.objects.create(follower=request.user)
+        print(post_count)
 
-            follow_obj.save()
+        comment_obj = Comment.objects.all()
 
+        follow_obj = Follow.objects.get(follower=request.user)
 
         is_following = False
 
@@ -323,38 +317,65 @@ class OtherUserDetailView(View):
             is_following = True
 
 
-        return render(request, 'other_user_details.html', {'data': data, 'is_following': is_following})
-  
+        return render(request, 'other_user_details.html', {
+            
+                                                            'profile_obj': data, 
+                                                            'is_following': is_following, 
+                                                            'post_obj':post_obj,
+                                                            'all_comments': comment_obj,
+                                                            'post_count': post_count,
+
+                                                            })
+
+
         
-
-class FollowUserView(View):
+# # follow user view (replaced with ajax)
+# class FollowUserView(View):
     
-    def post(self, request, *args, **kwargs):
+#     def post(self, request, *args, **kwargs):
 
-        id = kwargs.get('pk')
+#         id = kwargs.get('pk')
 
-        follow_profile_obj = UserProfile.objects.get(id=id)
+#         follow_profile_obj = UserProfile.objects.get(id=id)
 
-        try:
+#         try:
         
-            follow_obj = Follow.objects.create(follower=request.user)
+#             follow_obj = Follow.objects.create(follower=request.user)
 
-            follow_obj.save()
+#             follow_obj.save()
 
-        except:
+#         except:
 
-            follow_obj = Follow.objects.get(follower=request.user)
+#             follow_obj = Follow.objects.get(follower=request.user)
 
 
-        follow_obj.follows.add(follow_profile_obj.user_object)
+#         follow_obj.follows.add(follow_profile_obj.user_object)
 
-        follow_obj.save()
+#         follow_obj.save()
 
-        return redirect('following-users')
-    
+#         return redirect('following-users')
 
-# ajax requests
-    
+
+# # unfollow users (replaced with ajax)
+# class UnFollowUserView(View):
+
+#     def post(self, request, *args, **kwargs):
+
+#         id = kwargs.get('pk')
+
+#         followed_by_user = UserProfile.objects.get(id=id)
+
+#         follow_obj = Follow.objects.get(follower=request.user)
+
+#         follow_obj.follows.remove(followed_by_user.user_object)
+
+#         return redirect('following-users')
+      
+
+
+# follow other user
+# ajax requests  
+@method_decorator([signin_required, never_cache], name='dispatch')
 class FollowOtherUserView(View):
 
     def post(self, request, *args, **kwargs):
@@ -371,8 +392,10 @@ class FollowOtherUserView(View):
 
             return response
 
-# ajax request
-        
+
+# unfollow user
+# ajax request    
+@method_decorator([signin_required, never_cache], name='dispatch')    
 class UnFollowOtherUserView(View):
 
     def post(self, request, *args, **kwargs):
@@ -390,23 +413,10 @@ class UnFollowOtherUserView(View):
             return response
 
 
-class UnFollowUserView(View):
-
-    def post(self, request, *args, **kwargs):
-
-        id = kwargs.get('pk')
-
-        followed_by_user = UserProfile.objects.get(id=id)
-
-        follow_obj = Follow.objects.get(follower=request.user)
-
-        follow_obj.follows.remove(followed_by_user.user_object)
-
-        return redirect('following-users')
-    
 
 
 # all users in database except admin
+@method_decorator([signin_required, never_cache], name='dispatch')
 class AllUserView(View):
 
     def get(self, request, *args, **kwargs):
@@ -426,23 +436,12 @@ class AllUserView(View):
 
 
 # all following users
+@method_decorator([signin_required, never_cache], name='dispatch')
 class FollowingUsersView(View):
 
     def get(self, request, *args, **kwargs):
 
-        try:
-
-            login_following_users = Follow.objects.get(follower=request.user).follows.all()
-
-        except:
-
-            follow_obj = Follow.objects.create(follower=request.user)
-
-            follow_obj.save()
-
-            login_following_users = Follow.objects.get(follower=request.user).follows.all()
-
-
+        login_following_users = Follow.objects.get(follower=request.user).follows.all()
         # print(login_following_users)
 
         return render(request, 'following_users.html', {'all_following': login_following_users})
@@ -450,25 +449,17 @@ class FollowingUsersView(View):
 
 
 # all followed users
+@method_decorator([signin_required, never_cache], name='dispatch')
 class FollowedUsersView(View):
 
     def get(self, request, *args, **kwargs):
         
-        try:
+        # login_user_followers = Follow.objects.all().filter(follows=request.user)
 
-            # login_user_followers = Follow.objects.all().filter(follows=request.user)
+        login_user_followers = request.user.followers.all()
+        # print(login_user_followers)
 
-            login_user_followers = request.user.followers.all()
-            # print(login_user_followers)
-
-        except:
-            
-            follow_obj = Follow.objects.create(follower=request.user)
-
-            follow_obj.save()
-
-            # login_user_followers = Follow.objects.all().filter(follows=request.user)
-
+        # login_user_followers = Follow.objects.all().filter(follows=request.user)
 
         # print(login_user_followers)
 
@@ -476,6 +467,7 @@ class FollowedUsersView(View):
 
 
 
+@method_decorator([signin_required, never_cache], name='dispatch')
 class PostAddView(View):
 
     def get(self, request, *args, **kwargs):
@@ -501,7 +493,7 @@ class PostAddView(View):
         return render(request, 'post_add.html', {'form': form})
 
 
-
+@method_decorator([signin_required, never_cache], name='dispatch')
 class PostDeleteView(View):
 
     def get(self, request, *args, **kwargs):
@@ -513,7 +505,7 @@ class PostDeleteView(View):
         return redirect('home')
     
 
-
+@method_decorator([signin_required, never_cache], name='dispatch')
 class PostEditView(View):
 
     def get(self, request, *args, **kwargs):
@@ -545,6 +537,7 @@ class PostEditView(View):
     
 
 # post like and dislike (normal)
+@method_decorator([signin_required, never_cache], name='dispatch')
 class PostLikeDislikeView(View):
 
     def post(self, request, *args, **kwargs):
@@ -603,8 +596,8 @@ class PostLikeDislikeView(View):
 
 
 
-# like post with ajax 
-    
+# like post with ajax  
+@method_decorator([signin_required, never_cache], name='dispatch')
 class PostLikeView(View):
 
     def post(self, request, *args, **kwargs):
@@ -643,9 +636,10 @@ class PostLikeView(View):
                 response = JsonResponse({'msg': 'like removed', 'like_count': current_like_count, 'dislike_count': current_dislike_count, 'post_id': post_id})
 
                 return response
+    
             
-# ajax dilike
-            
+# ajax dilike   
+@method_decorator([signin_required, never_cache], name='dispatch')       
 class PostDislikeView(View):
 
     def post(self, request, *args, **kwargs):
@@ -686,6 +680,7 @@ class PostDislikeView(View):
                 
 
 
+@method_decorator([signin_required, never_cache], name='dispatch')
 class LoggedInUserAllLikesDislikesView(View):
 
     def get(self, request, *args, **kwargs):
@@ -714,6 +709,7 @@ class LoggedInUserAllLikesDislikesView(View):
 
 
 # all post of user
+@method_decorator([signin_required, never_cache], name='dispatch')
 class MyPostsView(View):
 
     def get(self, request, *args, **kwargs):
@@ -725,7 +721,7 @@ class MyPostsView(View):
         return render(request, 'my_post.html', {'all_posts': all_posts, 'all_comments': all_comments})
     
 
-
+@method_decorator([signin_required, never_cache], name='dispatch')
 class SearchPeopleView(View):
 
     def get(self, request, *args, **kwargs):
@@ -750,9 +746,22 @@ class SearchPeopleView(View):
         return response
 
 
-
-
+@method_decorator([signin_required, never_cache], name='dispatch')
 class StoryView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        id = kwargs.get('pk')
+
+        user_obj = User.objects.get(id=id)
+
+        data = Story.objects.filter(user_object=user_obj)
+
+        return render(request, 'story.html', {'all_user_story': data, 'user_obj': user_obj})
+
+
+@method_decorator([signin_required, never_cache], name='dispatch')
+class StoryAddView(View):
 
     def get(self, request, *args, **kwargs):
 
@@ -760,7 +769,7 @@ class StoryView(View):
 
         form = StoryForm(instance=story_object)
 
-        return render(request, 'story.html', {'form': form})
+        return render(request, 'story_add.html', {'form': form})
     
     def post(sefl, request, *args, **kwargs):
 
@@ -774,9 +783,11 @@ class StoryView(View):
 
             return redirect('home')
 
-        return render(request, 'story.html', {'form': form})
+        return render(request, 'story_add.html', {'form': form})
     
 
+# edit story view
+@method_decorator([signin_required, never_cache], name='dispatch')
 class StoryEditView(View):
 
     def get(self, request, *args, **kwargs):
@@ -806,7 +817,7 @@ class StoryEditView(View):
         return render(request, 'story_edit.html', {'form': form})
 
 
-
+@method_decorator([signin_required, never_cache], name='dispatch')
 class StoryDeleteView(View):
 
     def get(self, request, *args, **kwargs):

@@ -27,9 +27,10 @@ urlpatterns = [
 
     path('connect_space/post/<int:pk>/comment/add/', views.CommentView.as_view(), name='comment-add'),
 
-    path('connect_space/user/<int:pk>/follow/', views.FollowUserView.as_view(), name='follow-user'),
-
-    path('connect_space/user/<int:pk>/un-follow/', views.UnFollowUserView.as_view(), name='un-follow-user'),
+    # replaced with ajax
+    # path('connect_space/user/<int:pk>/follow/', views.FollowUserView.as_view(), name='follow-user'),
+    # replaced with ajax
+    # path('connect_space/user/<int:pk>/un-follow/', views.UnFollowUserView.as_view(), name='un-follow-user'),
 
     path('connect_space/all-users/', views.AllUserView.as_view(), name='all-user'),
 
@@ -40,11 +41,13 @@ urlpatterns = [
     path('connect_space/users/posts/all/', views.MyPostsView.as_view(), name='my-posts'),
 
     # story view
-    path('connect_space/story/add/', views.StoryView.as_view(), name='story-add'),
+    path('connect_space/story/add/', views.StoryAddView.as_view(), name='story-add'),
 
     path('connect_space/story/<int:pk>/remove/', views.StoryDeleteView.as_view(), name='story-delete'),
 
     path('connect_space/story/<int:pk>/change/', views.StoryEditView.as_view(), name='story-edit'),
+
+    path('connect_space/storys/user/<int:pk>/', views.StoryView.as_view(), name='story'),
 
     # search user
     path('search/', views.SearchPeopleView.as_view(), name='search-people'),
