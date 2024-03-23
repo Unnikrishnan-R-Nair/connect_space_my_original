@@ -254,6 +254,37 @@ class CommentView(View):
             return redirect('home')
 
         return render(request, 'comment_add.html', {'comment_form': form, 'post': post_obj, 'all_comments': all_comments})
+    
+
+# ajax comment add
+    
+# class CommentAddView(View):
+
+#     def post(self, request, *args, **kwargs):
+#         if request.is_ajax():
+#             print(request.POST)
+#         if request.POST.get('action') == 'post':
+
+#             print(request.POST.get('formData'))
+
+
+#             return JsonResponse({"message": "success"})
+
+
+
+# ajax comment delete
+class CommentDeleteView(View):
+
+    def post(self, request, *args, **kwargs):
+
+        if request.POST.get('action') == 'post':
+
+            print(request.POST)
+            id = int(request.POST.get('comment_id'))
+
+            Comment.objects.get(id=id).delete()
+
+            return JsonResponse({'msg':'success'})
 
  
 

@@ -28,6 +28,16 @@ small.designed {
     font-size: 11px;
 }
 
+
+/* file upload button style */
+input[type="file"]::-webkit-file-upload-button {
+    background: rgb(65, 66, 96)!important;
+}
+input[type="file"]::-webkit-file-upload-button:hover {
+    background: rgb(80, 82, 129)!important;
+}
+
+
 footer div {
     min-width: 320px;
 }

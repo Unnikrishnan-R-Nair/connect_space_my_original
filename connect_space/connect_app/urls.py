@@ -67,6 +67,10 @@ urlpatterns = [
     # ajax dislike
 
     path('dislike/', views.PostDislikeView.as_view(), name='dislike'),
+
+    # ajax comment delete
+
+    path('comment/remove/', views.CommentDeleteView.as_view(), name='comment-delete'),
    
 
 ]

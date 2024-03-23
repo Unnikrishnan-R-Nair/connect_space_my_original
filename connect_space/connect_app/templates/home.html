@@ -11,12 +11,13 @@
 {% endblock %}
 
 {% block main_content %}
+
 <!-- search form -->
 <section>
 
     <div class="py-3 bg-slate-300 text-center">
         <form method="get" class="search-form  w-8/12  sm:6/12 md:w-6/12 lg:w-4/12 mx-auto">             
-                <input class="search-box w-full p-1 rounded" type="text" placeholder="Search people" name="q" autocomplete="off" autofocus>
+                <input class="search-box w-full p-1 rounded" type="text" placeholder="Search people" name="q" autocomplete="off">
                 <button  type="submit" class="hidden search-btn px-4 py-1 rounded border border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">Search</button>   
                 <div class="search-result w-full border-x-2 border-slate-400 bg-slate-100 shadow-lg hidden rounded-sm"></div>
         </form>             
@@ -216,7 +217,7 @@
                         {% for comment in all_comments %}
                             
                             {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
-                                <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
+                                <div class="comment relative flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
                                     <div class="flex flex-col items-center user-div">
                                         <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
                                         <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
@@ -229,6 +230,8 @@
                                         <p class="my-2">{{comment.comment_text}}</p>
 
                                     </div>
+                                    <!-- comment delete button -->
+                                   <button data-comment-id="{{comment.id}}" type="button" class="comment-delete absolute top-1 right-2 cursor-pointer"><i class="fa-solid fa-circle-minus text-red-400 hover:text-red-500 text-sm"></i></button>                                   
                                 
                                 </div>
                             {% elif comment.post_object.id == post.id and comment.comment_by != request.user  %}
@@ -515,9 +518,36 @@
 </script>
 
 
+<!-- ajax comment delete -->
 <script>
 
-// ajax comment
+// ajax comment delete
+
+document.querySelectorAll('.comment-delete').forEach(function(button){
+    button.addEventListener('click', function(e){
+        comment_id = parseInt(this.dataset.commentId)
+        console.log(comment_id)
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '{% url "comment-delete" %}',
+            data: {
+                comment_id: comment_id,
+                csrfmiddlewaretoken: '{{csrf_token}}',
+                action: 'post',
+            },
+            
+
+            success: function(json){
+                location.reload();
+                console.log(json);
+            },
+            error: function(xhr, errmsg, err){
+                console.log(err);
+            }
+        })
+    })
+})
 
 </script>
 

@@ -78,7 +78,7 @@
                         {% for comment in all_comments %}
                             
                             {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
-                                <div class="comment flex items-center gap-5 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
+                                <div class="relative comment flex items-center gap-5 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
 
                                     <div class="flex flex-col items-center user-div">
                                         <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
@@ -93,6 +93,10 @@
                                         <p class="my-2">{{comment.comment_text}}</p>
 
                                     </div>
+
+                                    <!-- comment delete button -->
+                                    <button data-comment-id="{{comment.id}}" type="button" class="comment-delete absolute top-1 right-2 cursor-pointer"><i class="fa-solid fa-circle-minus text-red-400 hover:text-red-500 text-sm"></i></button>                                   
+                                
                                 
                                 </div>
                             {% elif comment.post_object.id == post.id and comment.comment_by != request.user  %}
@@ -129,11 +133,11 @@
     <div class="flex justify-center">
     
         <div class="w-full md:w-7/12 xl:w-6/12 my-10 mb-16 p-3 shadow border-2 rounded bg-white">
-            <form action="" method="post" enctype="multipart/form-data">
+            <form class="comment-add-form" data-post-id="{{post.id}}" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{comment_form|crispy}}
                 <div class="text-center mt-5">
-                    <button type="submit" class="px-4 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded">Add Comment</button>
+                    <button type="submit" class="px-4 py-1 bg-indigo-900 hover:bg-indigo-800 text-white text-lg rounded">Add Comment</button>
                 </div>
             </form>
         </div>
@@ -262,5 +266,81 @@
     
 </script>
 
+<!-- ajax comment delete -->
+<script>
+
+    // ajax comment delete
+    
+    document.querySelector('.comment-delete').addEventListener('click', function(e){
+            comment_id = parseInt(this.dataset.commentId)
+            console.log(comment_id)
+            e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url: '{% url "comment-delete" %}',
+                data: {
+                    comment_id: comment_id,
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    action: 'post',
+                },
+                
+    
+                success: function(json){
+                    location.reload();
+                    console.log(json);
+                },
+                error: function(xhr, errmsg, err){
+                    console.log(err);
+                }
+            });
+        })
+
+    
+</script>
+
+<!-- comment add ajax -->
+<!-- <script>
+
+    let text = document.querySelector('#id_comment_text').value;
+    let image = document.querySelector('#id_comment_image')
+    console.log(image.files[0])
+    console.log(text)
+    let csrf_token = '{{csrf_token}}'
+    document.querySelector('.comment-add-form').addEventListener('submit', function(e){
+        e.preventDefault();
+        let formData = new FormData()
+        formData.append('text', text)
+        formData.append('image', image.files[0])
+        formData.append('csrfmiddlewaretoken', csrf_token)
+        console.log(formData)
+
+        let post_id = this.dataset.postId;
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'comment' %}",
+            enctype: 'multipart/form-data',
+            
+            processData: false,
+            contentType: false,
+            data: {
+                formData: formData,
+                post_id: post_id,
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: "post",
+            },
+            
+            success: function(json){
+                console.log(json);
+            },
+
+            error: function(xhr, errmsg, err){
+                console.log(err);
+            }
+
+
+        })
+    })
+</script> -->
 
 {% endblock %}
