@@ -101,6 +101,7 @@
                     {% endfor %}
                     
                 </span>
+                
                 <div class="absolute top-7 left-7 flex items-center gap-2">
                     <img class="h-12 w-12 rounded-full object-cover  border-2 border-slate-400" src="{{user_obj.profile.image.url}}" alt="">
                     <span class="text-sm text-gray-300 px-2 capitalize ">
@@ -110,7 +111,7 @@
                         {{user_obj.username}}
                         {% endif %}
                     </span>
-    
+                    
                 </div>
                
             </div>
@@ -119,6 +120,11 @@
                 {% for story in all_user_story %}
 
                 <div class="eachStory active" style="background-image: url('https://ucnnews.live/uploads/front_end_news_content/compress1739670554405444.webp') ;">
+                    <!-- story delete button -->
+                    {% if user_obj == request.user %}
+                    <a href="{% url 'story-delete' story.id %}" class="cursur-pointer z-50"><span class="absolute top-7 right-7 rounded-full bg-white px-2 py-[2px]"><i class="fa-solid fa-trash text-red-600 hover:text-red-500"></i></span></a>
+                    {% endif %}
+
                     {% if story.image %}
                     <img src="{{story.image.url}}" alt="Img 3">
                     {% else %}
