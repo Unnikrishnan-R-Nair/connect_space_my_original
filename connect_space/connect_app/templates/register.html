@@ -71,7 +71,7 @@
                 Password*
               </label>
             </div>
-            <div class="mt-2">
+            <div class="mt-2 password-input relative">
               <input
                 name="password1"
                 class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
@@ -79,6 +79,7 @@
                 placeholder="Password"
                 id="password1"
               />
+              <span class="absolute bottom-[8px] right-[8px] cursor-pointer"><i class="fa-solid fa-eye"></i></span>
             </div>
           </div>
           <div>
@@ -87,7 +88,7 @@
                 Confirm Password*
               </label>
             </div>
-            <div class="mt-2">
+            <div class="mt-2 confirm-password-input relative">
               <input
                 name="password2"
                 class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
@@ -95,6 +96,7 @@
                 placeholder="Password"
                 id="password2"
               />
+              <span class="absolute bottom-[8px] right-[8px] cursor-pointer"><i class="fa-solid fa-eye"></i></span>
             </div>
           </div>
 
@@ -177,6 +179,6 @@
 
 {% block script_block %}
 
-<script src="{% static 'js/login_register.js' %}"></script>
+<script src="{% static 'js/register.js' %}"></script>
 
 {% endblock %}
