@@ -13,7 +13,8 @@
 <section>
     <div class="flex justify-center flex-col items-center"> 
         <h3 class="text-center text-3xl font-semibold text-gray-600 my-5"><span class="bg-slate-300 px-4 py-1 rounded"><i>Users</i> who '<b class="font-bold">follow</b>' you:</span></h3> 
-                  
+             
+        {% if all_followed %}
         {% for user in all_followed %}
             
             <div class="w-full md:w-7/12 xl:w-6/12 my-5 border-2 shadow-md bg-white px-2">
@@ -41,6 +42,9 @@
             </div>
 
         {% endfor %}
+        {% else %}
+        <h1 class="text-center mt-10 text-3xl text-gray-300 italic">No Followers</h1>
+        {% endif %}
     </div>
 </section>
 
