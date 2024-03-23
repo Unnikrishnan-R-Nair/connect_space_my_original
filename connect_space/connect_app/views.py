@@ -105,39 +105,38 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
 
-        # user followers
+        try:
+            # user followers
+            user_followers = Follow.objects.filter(follows=request.user)
 
-        user_followers = Follow.objects.filter(follows=request.user)
+            print(user_followers)
 
-        print(user_followers)
+             # user following
+            user_following = Follow.objects.get(follower=request.user).follows.all()
 
-        # user following
-        user_following = Follow.objects.get(follower=request.user).follows.all()
-
-        print(user_following)
+            print(user_following)
 
 
-        all_user_profiles = UserProfile.objects.all()
+            all_user_profiles = UserProfile.objects.all()
        
-        profile_obj = UserProfile.objects.get(user_object=request.user)
+            all_post_obj = Post.objects.all()
 
-        all_post_obj = Post.objects.all()
- 
+            all_comment_obj = Comment.objects.all()
+
+        except:
+            
+            pass
+
         logged_in_user_post = Post.objects.filter(post_by=request.user)
 
-        logged_in_user_post_count = logged_in_user_post.aggregate(total_post=Count('id'))  
+        logged_in_user_post_count = logged_in_user_post.aggregate(total_post=Count('id')) 
 
-        # Comment
+        profile_obj = UserProfile.objects.get(user_object=request.user)
 
-        # comment_obj1 = Comment(comment_by=request.user, post_object=Post.objects.get(id=2))
 
-        all_comment_obj = Comment.objects.all()
-
-        # comment_form = CommentForm(instance=comment_obj1)
-
-        # story 
 
         try:
+            # story delete of logged user if expired 
 
             logged_in_user_story = Story.objects.filter(user_object=request.user)
 
@@ -172,25 +171,30 @@ class HomeView(View):
 
         
 
-
-        # story of user followed by logged user
-
-        admin_obj = User.objects.get(username='admin')
-
-        user_profiles = UserProfile.objects.all().exclude(user_object=request.user).exclude(user_object=admin_obj)
-
+        # story of users followed by logged user
         users_with_story = {}
 
-        for user in user_profiles:
+        user_profiles = UserProfile.objects.all().exclude(user_object=request.user)
 
-            story_objects = user.user_object.story.filter(user_object=user.user_object)
+        try: 
 
-            if story_objects and request.user.following.follows.contains(user.user_object):
+            admin_obj = User.objects.get(username='admin')
 
-                
-                users_with_story.update({user.user_object : story_objects})
+            user_profiles = user_profiles.exclude(user_object=admin_obj)
 
-        # print(users_with_story)
+            for user in user_profiles:
+
+                story_objects = user.user_object.story.filter(user_object=user.user_object)
+
+                if story_objects and request.user.following.follows.contains(user.user_object):
+                    
+                    users_with_story.update({user.user_object : story_objects})
+
+            # print(users_with_story)
+                    
+        except:
+
+            pass
 
 
         return render(request, 'home.html', {
@@ -210,12 +214,12 @@ class HomeView(View):
                                             'all_user_story': logged_in_user_story,
 
                                             'story_objects': users_with_story,
-
+                                            
                                             'user_profiles': user_profiles,
                                             
                                             })
-    
 
+  
 # comment view
 @method_decorator([signin_required, never_cache], name='dispatch')
 class CommentView(View):
@@ -547,9 +551,11 @@ class PostEditView(View):
 
         post_obj = Post.objects.get(id=id)
 
+        all_comments = Comment.objects.all()
+
         form = PostAddForm(instance=post_obj)
 
-        return render(request, 'post_edit.html', {'form':form})
+        return render(request, 'post_edit.html', {'form':form, 'post': post_obj, 'all_comments': all_comments})
     
 
     def post(self, request, *args, **kwargs):
@@ -557,6 +563,8 @@ class PostEditView(View):
         id = kwargs.get('pk')
 
         post_obj = Post.objects.get(id=id)
+
+        all_comments = Comment.objects.all()
 
         form = PostAddForm(request.POST, files=request.FILES, instance=post_obj)
 
@@ -566,7 +574,7 @@ class PostEditView(View):
 
             return redirect('home')
         
-        return render(request, 'post_edit.html', {'form':form})
+        return render(request, 'post_edit.html', {'form':form, 'post': post_obj, 'all_comments': all_comments})
     
 
 # post like and dislike (normal)

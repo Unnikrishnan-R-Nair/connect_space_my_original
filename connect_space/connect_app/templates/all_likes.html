@@ -120,9 +120,11 @@
         </div>
     </div>
 
-    <div class="mb-10">
+    <div class="mb-34">
         <h3 class="text-center text-3xl font-semibold text-gray-600 my-5"><span class="bg-slate-300 px-4 py-1 rounded"><i>Users</i> who '<b class="font-bold">{{action}}</b>' your post:</span></h3>
-        <div class="flex justify-center flex-col items-center">
+        
+        {% if all_user %}
+        <div class="flex justify-center flex-col items-center mb-10">
             
             {% for user in all_user %}
                 <div class="w-full md:w-7/12 xl:w-6/12 my-2 my-5 border-2 shadow-md bg-white">
@@ -150,6 +152,15 @@
 
             {% endfor %}
         </div>
+        {% elif action == 'like' %}
+
+        <h4 class="text-center mt-10 text-3xl text-gray-300 italic mb-[80px]">No {{action}}s</h4>
+
+        {% elif action == 'dislike' %}
+
+        <h4 class="text-center mt-10 text-3xl text-gray-300 italic mb-[80px]">No {{action}}s</h4>
+        
+        {% endif %}
     </div>
 </section>
 

@@ -7,7 +7,7 @@
 {% block link_block %}
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
-
+<link rel="stylesheet" href="{% static 'css/post_edit.css' %}">
 
 {% endblock %}
 
@@ -15,11 +15,155 @@
 {% block main_content %}
 
 <section>
+
+    <!-- post section -->
+    <h3 class="text-center text-3xl font-semibold text-gray-600 my-5"><span class="bg-slate-300 px-4 py-1 rounded">Edit <i class="font-semibold">Post</i></span></h3> 
+    <div class="flex justify-center">
+
+        <div class="post-section w-full md:w-7/12 xl:w-6/12 ">
+            <!-- POST -->
+            
+            <div class="border rounded p-6 my-5 shadow-md bg-white post-div">
+                <div class="flex items-center gap-4">
+                    <img class="post-owner-image" src="{{post.post_by.profile.image.url}}" alt="">
+                    <span class="text-slate-600 capitalize">{% if post.post_by.profile.first_name != None and post.post_by.profile.first_name != 'None' %}{{post.post_by.profile.first_name}} {% else %}{{post.post_by}}{% endif %} ,</span>
+                    <span class="text-slate-500">{{post.created_date|date:"d M Y"}}</span>
+                </div>
+                <div class="mt-4 px-3">
+                    {% if post.title != None %}
+                    <h4 class="font-semibold text-lg">{{post.title}}</h4>
+                    {% endif %}
+                    {% if post.image %}
+                    <img class="rounded post-image my-3" src="{{post.image.url}}" alt="">
+                    
+                    {% endif %}
+                    <p class="mt-4">{{post.content}}</p>
+    
+                </div>
+                <!-- post like and dislike section -->
+                <div class="my-5">
+    
+                    {% if request.user == post.post_by %}
+    
+                        <form action="{% url 'all-like-dislike' post.id  %}" class="inline" method="get">
+                            
+                            <button data-index="{{post.id}}" class="user-like-btn" name="like-dislike" value="like" type="submit"><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> {{post.like_count}}</span></button>
+                            <button data-index="{{post.id}}" class="user-dislike-btn" name="like-dislike" value="dislike" type="submit"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> {{post.dislike_count}}</span></button>
+    
+                        </form>
+    
+                    {%else%}
+    
+                        <form class="inline" method="">
+                            {% csrf_token %}
+                            <button type="button" id="post{{post.id}}" data-post-id="{{post.id}}" class="like-btn" name="like" value="like" ><span class="text-blue-500 mr-5"><i class="fa-solid fa-thumbs-up"></i> <small>Likes</small> <span class="post-like-count">{{post.like_count}}</span></span></button>
+                            <button type="button" id="post{{post.id}}" data-post-id="{{post.id}}" class="dislike-btn" name="dislike" value="dislike"><span class="text-blue-900 mr-5"><i class="fa-solid fa-thumbs-down"></i> <small>Dislikes</small> <span class="post-dislike-count">{{post.dislike_count}}</span></span></button>
+    
+                        </form>
+    
+                    {% endif %}
+                    <span class="text-orange-500 comment-count-span"><i class="fa-regular fa-comment"></i> <small>Comments</small> {{post.comment_count}}</span>
+                    {% if post.post_by == request.user %}
+                    <div class="mt-4 logged-user-btn bg-slate-200 px-2 rounded-sm shadow-md">
+                        <a href="{% url 'post-delete' post.id %}" class="mr-5"><span class="text-red-500 "><i class="fa-solid fa-trash"></i> Delete</span></a>
+                        <!-- <a href="{% url 'post-edit' post.id %}"><span class="text-purple-500"><i class="fa-solid fa-pen"></i> Edit</span></a> -->
+    
+                    </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <!-- Comment for post -->
+                    <div>
+                        <div class="text-end mb-2">
+                            <a href="{% url 'comment-add' post.id %}"><button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1 rounded text-white shadow-sm"><i class="fa-solid fa-plus mr-3px"></i> Comment</button></a>
+                        </div>
+    
+                        <!-- ajax form implementation -->
+                        <!-- <form action="" class="commentform" data-post-id="{{post.id}}" id="commentform{{post.id}}"  method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+    
+                            <div class="flex">
+                                <textarea name="comment_text" type="text" class="w-11/12 border-2 px-2 rounded"></textarea>
+                                <i class="fa-solid fa-paperclip"></i>
+                                <button type="submit" class="comment-submit border p-3 px-4 ml-4 rounded bg-blue-500 text-zinc-100 text-sm"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                            <div class="my-4">
+                                <span class="me-5 border-2 px-3 py-1 text-cyan-600">
+                                    <i class="fa-regular fa-image"></i> Photo
+                                    <input class="comment_image" name="comment_image" type="file" accept="image/*">
+                                </span>
+                                
+                            </div>
+                        </form>  -->
+    
+                    </div>
+    
+                    {% if post.comment_count > 0 %}
+                    <div class="comment-section p-2 rounded bg-slate-50">
+                        <!-- display all comments -->
+    
+                        {% for comment in all_comments %}
+                            
+                            {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
+                                <div class="comment relative flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
+                                    <div class="flex flex-col items-center user-div">
+                                        <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
+                                        <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
+                                        <span></span>
+                                    </div>
+                                    <div>
+                                        {% if comment.comment_image.url != None %}
+                                        <img style="width: 200px;" class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
+                                        {% endif %}
+                                        <p class="my-2">{{comment.comment_text}}</p>
+    
+                                    </div>
+                                    <!-- comment delete button -->
+                                   <button data-comment-id="{{comment.id}}" type="button" class="comment-delete absolute top-1 right-2 cursor-pointer"><i class="fa-solid fa-circle-minus text-red-400 hover:text-red-500 text-sm"></i></button>                                   
+                                
+                                </div>
+                            {% elif comment.post_object.id == post.id and comment.comment_by != request.user  %}
+    
+                                <div class="flex justify-end">
+    
+                                    <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-slate-100">
+                                        <div class="flex flex-col items-center user-div">
+                                            <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt=""> 
+                                            <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
+                                            <span></span>
+                                        </div>
+                                        <div>
+                                            {% if comment.comment_image.url != None %}
+                                            <img style="width: 200px; " class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
+                                            {% endif %}
+                                            <p class="my-2">{{comment.comment_text}}</p>
+    
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+    
+                            {% endif %}
+                        {% endfor %}
+    
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+
     <div class="flex justify-center">
         <div class="w-full md:w-7/12 xl:w-6/12 my-10 mb-16 p-3 shadow border-2 rounded bg-white">
             <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{form|crispy}}
+
+                <label for="id_image">Change Image</label>
+                <input class="mb-3" type="file" name="image" id="id_image">
+                {{form.title|as_crispy_field}}
+                
                 <div class="text-center mt-5">
                     <button type="submit" class="px-4 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded">Edit Post</button>
                 </div>
@@ -58,6 +202,38 @@
 
     
 
+</script>
+
+<!-- ajax comment delete -->
+<script>
+
+    // ajax comment delete
+    
+    document.querySelector('.comment-delete').addEventListener('click', function(e){
+            comment_id = parseInt(this.dataset.commentId)
+            console.log(comment_id)
+            e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url: '{% url "comment-delete" %}',
+                data: {
+                    comment_id: comment_id,
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    action: 'post',
+                },
+                
+    
+                success: function(json){
+                    location.reload();
+                    console.log(json);
+                },
+                error: function(xhr, errmsg, err){
+                    console.log(err);
+                }
+            });
+        })
+
+    
 </script>
 
 {% endblock %}
