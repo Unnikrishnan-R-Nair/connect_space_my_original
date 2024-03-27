@@ -18,7 +18,7 @@
     <div class="py-3 bg-slate-300 text-center">
         <form method="get" class="search-form  w-8/12  sm:6/12 md:w-6/12 lg:w-4/12 mx-auto">             
                 <input class="search-box w-full p-1 rounded" type="text" placeholder="Search people" name="q" autocomplete="off">
-                <button  type="submit" class="hidden search-btn px-4 py-1 rounded border border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">Search</button>   
+                <button type="submit" class="search-btn absolute bottom-[5px] right-[8px] cursor-pointer"><i class="fa-solid fa-magnifying-glass "></i></button>      
                 <div class="search-result w-full border-x-2 border-slate-400 bg-slate-100 shadow-lg hidden rounded-sm"></div>
         </form>             
     </div>
@@ -32,10 +32,10 @@
         <!-- user section -->
         <div class="rounded shadow-sm user-section border bg-white " style="height: fit-content;">
             <div class="cover-photo">
-
+                <img class="h-[220px]" src="{{request.user.profile.cover_image.url}}" alt="">
             </div>
             <div class="user-detail px-1">
-                <div class="text-center">
+                <div class="text-center text-base sm:text-lg">
 
                     <img class="rounded mt-10 mx-auto mb-3 border-white border-2 user-image" src="{{profile_obj.image.url}}" alt="">
                     
@@ -221,12 +221,12 @@
                                 
                                 {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
                                     <div class="comment relative flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-6/12 rounded-xl bg-white">
-                                        <div class="flex flex-col items-center user-div">
-                                            <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
+                                        <div class="flex flex-col items-center user-div" style="flex: 0 0 50px">
+                                            <img class="comment-user-image flex-none" src="{{comment.comment_by.profile.image.url}}" alt="">    
                                             <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
                                             <span></span>
                                         </div>
-                                        <div>
+                                        <div class="px-2">
                                             {% if comment.comment_image.url != None %}
                                             <img style="width: 200px;" class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
                                             {% endif %}
@@ -242,8 +242,8 @@
                                     <div class="flex justify-end">
 
                                         <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-6/12 rounded-xl bg-slate-100">
-                                            <div class="flex flex-col items-center user-div">
-                                                <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt=""> 
+                                            <div class="flex flex-col items-center user-div" style="flex: 0 0 50px">
+                                                <img class="comment-user-image flex-none" src="{{comment.comment_by.profile.image.url}}" alt=""> 
                                                 <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
                                                 <span></span>
                                             </div>

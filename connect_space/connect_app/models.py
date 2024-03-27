@@ -17,6 +17,8 @@ class UserProfile(models.Model):
 
     image = models.ImageField(upload_to='images/profile_image/', default='images/default.jpg', null=True, blank=True)
 
+    cover_image = models.ImageField(upload_to='images/cover_image/', default='images/default_cover.jpg', null=True, blank=True)
+
     date_of_birth = models.DateField(null=True, blank=True)
 
     phone = models.CharField(max_length=10, null=True, blank=True)
