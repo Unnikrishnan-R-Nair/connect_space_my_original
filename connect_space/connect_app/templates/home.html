@@ -218,19 +218,19 @@
                             <!-- display all comments -->
 
                             {% for comment in all_comments %}
-                                
+                           
                                 {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
-                                    <div class="comment relative flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-6/12 rounded-xl bg-white">
+                                    <div class="comment relative flex sm:gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 md:w-6/12 rounded-xl bg-white">
                                         <div class="flex flex-col items-center user-div" style="flex: 0 0 50px">
                                             <img class="comment-user-image flex-none" src="{{comment.comment_by.profile.image.url}}" alt="">    
                                             <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
                                             <span></span>
                                         </div>
-                                        <div class="px-2">
+                                        <div class="comment-text-div px-2 sm:mt-[20px]">
                                             {% if comment.comment_image.url != None %}
                                             <img style="width: 200px;" class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
                                             {% endif %}
-                                            <p class="my-2">{{comment.comment_text}}</p>
+                                            <p class="my-2 ">{{comment.comment_text}}</p>
 
                                         </div>
                                         <!-- comment delete button -->
@@ -241,13 +241,13 @@
 
                                     <div class="flex justify-end">
 
-                                        <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-6/12 rounded-xl bg-slate-100">
+                                        <div class="comment flex sm:gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 md:w-6/12 rounded-xl bg-slate-100">
                                             <div class="flex flex-col items-center user-div" style="flex: 0 0 50px">
                                                 <img class="comment-user-image flex-none" src="{{comment.comment_by.profile.image.url}}" alt=""> 
                                                 <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
                                                 <span></span>
                                             </div>
-                                            <div>
+                                            <div class="comment-text-div px-2 sm:mt-[20px]">
                                                 {% if comment.comment_image.url != None %}
                                                 <img style="width: 200px; " class="comment-image rounded-md" src="{{comment.comment_image.url}}" alt="">
                                                 {% endif %}
