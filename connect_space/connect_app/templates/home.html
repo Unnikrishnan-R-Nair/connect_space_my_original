@@ -35,13 +35,13 @@
                 <img class="h-[220px]" src="{{request.user.profile.cover_image.url}}" alt="">
             </div>
             <div class="user-detail px-1">
-                <div class="text-center text-base sm:text-lg">
+                <div class="text-center">
 
                     <img class="rounded mt-10 mx-auto mb-3 border-white border-2 user-image" src="{{profile_obj.image.url}}" alt="">
                     
                     {% if profile_obj.first_name != None and profile_obj.first_name != 'None' %}
 
-                    <h4 class="font-semibold">{{ profile_obj.first_name }} {{profile_obj.last_name}}</h4>
+                    <h4 class="font-semibold lg:text-lg">{{ profile_obj.first_name }} {{profile_obj.last_name}}</h4>
 
                     {% else %}
 
@@ -55,16 +55,16 @@
                     <div class="flex mt-5 justify-center items-center">
                         <div class="border-r-2 px-4">
                             <a href="{% url 'my-posts' %}"><span class="font-bold hover:text-blue-500">{{post_count.total_post}}</span></a>
-                            <div>{% if post_count.total_post > 1 %}Posts{% else %}Post{% endif %}</div>
+                            <div class="md:text-base lg:text-lg">{% if post_count.total_post > 1 %}Posts{% else %}Post{% endif %}</div>
                         </div>
                         <div class="border-r-2 px-4">
                             <a href="{% url 'followed-users' %}"><span class="font-bold hover:text-blue-500">{% if request.user.following.follower_count > 0 %}{{request.user.following.follower_count}}{% else %}0{% endif %}</span></a>
-                            <div>{% if request.user.following.follower_count > 1 %} Followers {% else %} Follower {% endif %}</div>
+                            <div class="md:text-base lg:text-lg">{% if request.user.following.follower_count > 1 %} Followers {% else %} Follower {% endif %}</div>
 
                         </div>
                         <div class=" px-4">
                             <a href="{% url 'following-users' %}"><span class="font-bold hover:text-blue-500">{% if request.user.following.following_count %}{{request.user.following.following_count}}{% else %}0{% endif %}</span></a>
-                            <div>Following</div>
+                            <div class="md:text-base lg:text-lg">Following</div>
 
                         </div>
                     </div>
