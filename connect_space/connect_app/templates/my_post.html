@@ -28,7 +28,7 @@
                     <img class="rounded post-image my-3" src="{{post.image.url}}" alt="">
                     
                     {% endif %}
-                    <p class="mt-4">{{post.content}}</p>
+                    <p class="mt-4 post-content" style="white-space: pre-wrap;">{{post.content}}</p>
 
                 </div>
                 <!-- post like and dislike section -->
@@ -144,3 +144,33 @@
 </section>
 
 {% endblock main_content %} 
+
+{% block script_block %}
+
+<!-- likyfy scripts -->
+<script src="https://cdn.jsdelivr.net/npm/linkifyjs@4.1.3/dist/linkify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/linkify-html@4.1.3/dist/linkify-html.min.js"></script>
+
+<script>
+
+const options = { defaultProtocol: "https" };
+document.querySelectorAll(".post-content").forEach((post)=>{
+    text = post.innerHTML
+    console.log(text)
+    newText = linkifyHtml(
+        text,
+        options
+      );
+    post.innerHTML = newText
+    post.querySelector("a").style.color="darkblue"
+    linkText = post.querySelector("a").innerHTML
+    
+    linkText.length>20 ? linkText=linkText.slice(0, 30) + "...": ""
+
+    post.querySelector("a").innerHTML = linkText
+    post.querySelector('a').setAttribute("target", "_blank");
+})
+
+</script>
+
+{% endblock %}
