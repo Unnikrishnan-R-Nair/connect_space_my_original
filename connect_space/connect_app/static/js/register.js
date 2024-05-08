@@ -25,3 +25,11 @@ document.querySelector('.confirm-password-input span i.fa-solid').addEventListen
         document.querySelector('.confirm-password-input input#password2').setAttribute('type', 'password');
     }
 });
+
+
+
+// message box 
+
+document.querySelector(".message-close-btn").addEventListener("click", function(e){
+    document.querySelector(".message-box").remove();
+})

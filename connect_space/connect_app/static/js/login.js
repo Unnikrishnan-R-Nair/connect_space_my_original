@@ -12,3 +12,8 @@ document.querySelector('.password-input span i.fa-solid').addEventListener('clic
 });
 
 
+// message box
+
+document.querySelector(".message-close-btn").addEventListener("click", function(e){
+    document.querySelector(".message-box").remove();
+})

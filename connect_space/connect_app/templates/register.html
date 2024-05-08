@@ -10,6 +10,115 @@
 {% block main_content %}
 
 <section>
+
+  
+  {% if messages %}
+
+  {% for m in messages %}
+
+  {% if m.tags == "error" %}
+
+  <div class="rounded-md border-l-4 border-red-500 bg-red-100 p-4 message-box">
+    <div class="flex items-center justify-between space-x-4">
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-6 w-6 text-red-600"
+        >
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-red-600">
+          {{m}}
+        </p>
+      </div>
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-6 w-6 cursor-pointer text-red-600 message-close-btn"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </div>
+    </div>
+  </div>
+  
+
+  {% else %}
+
+  <div class="rounded-md border-l-4 border-green-500 bg-green-100 p-4 message-box">
+    <div class="flex items-center justify-between space-x-4">
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-6 w-6 text-green-600"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-green-600 message-close-btn">
+          {{m}}
+        </p>
+      </div>
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-6 w-6 cursor-pointer text-green-600"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </div>
+    </div>
+  </div>
+  
+  
+
+  {% endif %}
+
+  {% endfor %}
+  {% endif %}
+  
+
+
   <div
     class="flex items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-24 "
   >
@@ -49,6 +158,7 @@
                 placeholder="Username"
                 id="name"
               />
+              {% if form.errors %}<li class="text-red-500 list-none">{{form.errors.username}}</li>{% endif %}
             </div>
           </div>
           <div>
@@ -63,6 +173,7 @@
                 placeholder="Email"
                 id="email"
               />
+              {% if form.errors %}<li class="text-red-500 list-none">{{form.errors.email}}</li>{% endif %}
             </div>
           </div>
           <div>
@@ -79,7 +190,8 @@
                 placeholder="Password"
                 id="password1"
               />
-              <span class="absolute bottom-[8px] right-[8px] cursor-pointer"><i class="fa-solid fa-eye"></i></span>
+              <span class="absolute top-[8px] right-[8px] cursor-pointer"><i class="fa-solid fa-eye"></i></span>
+              {% if form.errors %}<li class="text-red-500 list-none">{{form.errors.password1}}</li>{% endif %}
             </div>
           </div>
           <div>
@@ -96,15 +208,13 @@
                 placeholder="Password"
                 id="password2"
               />
-              <span class="absolute bottom-[8px] right-[8px] cursor-pointer"><i class="fa-solid fa-eye"></i></span>
+              <span class="absolute top-[8px] right-[8px] cursor-pointer"><i class="fa-solid fa-eye"></i></span>
+              {% if form.errors %}<li class="text-red-500 list-none">{{form.errors.password2}}</li>{% endif %}
             </div>
           </div>
 
-          {% if form.errors %}
-            <div class="ml-4 text-red-400"> 
-                {{form.errors}}
-            </div>
-          {% endif%}
+         
+
           <div>
             <button
               type="submit"
