@@ -779,7 +779,7 @@ class SearchPeopleView(View):
             search_text = request.GET.get('search_text')
        
         # all_u = UserProfile.objects.filter(first_name__contains=search_text).exclude(first_name=request.user.profile.first_name) or UserProfile.objects.filter(last_name__startswith=search_text).exclude(last_name=request.user.profile.last_name)
-        all_u = UserProfile.objects.filter(first_name__iexact=search_text).exclude(id=request.user.id) or UserProfile.objects.filter(last_name__startswith=search_text).exclude(id=request.user.id)
+        all_u = UserProfile.objects.filter(first_name__iexact=search_text).exclude(id=request.user.id) or UserProfile.objects.filter(last_name__iexact=search_text).exclude(id=request.user.id)
 
         data = serializers.serialize("json", list(all_u), fields=('first_name', 'last_name',))
         # print(data)
