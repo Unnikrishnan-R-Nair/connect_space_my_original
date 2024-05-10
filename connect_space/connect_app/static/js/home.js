@@ -93,7 +93,7 @@ if(document.querySelector('.post-story-btn')) {
 const options = { defaultProtocol: "https" };
 document.querySelectorAll(".post-content").forEach((post)=>{
     text = post.innerHTML
-    console.log(text)
+    // console.log(text)
     newText = linkifyHtml(
         text,
         options

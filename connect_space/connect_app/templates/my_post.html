@@ -95,7 +95,7 @@
                         {% for comment in all_comments %}
                             
                             {% if comment.post_object.id == post.id and comment.comment_by == request.user %}
-                                <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
+                                <div class="comment flex  gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-white">
                                     <div class="flex flex-col items-center user-div">
                                         <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt="">    
                                         <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
@@ -114,7 +114,7 @@
 
                                 <div class="flex justify-end">
 
-                                    <div class="comment flex items-center gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-slate-100">
+                                    <div class="comment flex  gap-6 my-4 border-2 shadow-md p-3 w-10/12 sm:w-8/12 xl:w-7/12 rounded-xl bg-slate-100">
                                         <div class="flex flex-col items-center user-div">
                                             <img class="comment-user-image" src="{{comment.comment_by.profile.image.url}}" alt=""> 
                                             <span><small class="text-xs text-gray-500 capitalize">{% if comment.comment_by.profile.first_name != None %}{{comment.comment_by.profile.first_name}} {% else %} {{comment.comment_by}} {% endif %} </small></span>   
@@ -156,7 +156,7 @@
 const options = { defaultProtocol: "https" };
 document.querySelectorAll(".post-content").forEach((post)=>{
     text = post.innerHTML
-    console.log(text)
+    //console.log(text)
     newText = linkifyHtml(
         text,
         options
