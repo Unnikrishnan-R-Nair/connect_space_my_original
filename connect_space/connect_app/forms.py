@@ -1,3 +1,4 @@
+from typing import Any
 from django import forms 
 
 from django.contrib.auth.models import User
@@ -15,6 +16,11 @@ class RegistrationForm(UserCreationForm):
 
         fields = ['username', 'email', 'password1', 'password2']
 
+    # to make email as required field
+    def __init__(self, *args: Any, **kwargs: Any):
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+
+        self.fields['email'].required = True
         
  
 class LoginForm(forms.Form):
