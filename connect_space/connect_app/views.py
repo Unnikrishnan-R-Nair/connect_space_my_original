@@ -261,7 +261,8 @@ class CommentView(View):
 
             form.save()
 
-            return redirect('home')
+            form = CommentForm()
+            # return redirect('home')
 
         return render(request, 'comment_add.html', {'comment_form': form, 'post': post_obj, 'all_comments': all_comments})
     
